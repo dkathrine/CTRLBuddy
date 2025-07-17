@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:CTRLBuddy/home_screen.dart';
+import 'package:ctrl_buddy/home_screen.dart';
+import 'package:ctrl_buddy/widgets/bottom_nav.dart';
 //import 'package:CTRLBuddy/widgets/bottom_nav_ai.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Color(0xFF281E2E),
+        bottomNavigationBar: CustomBottomNav(),
         /* bottomNavigationBar: CustomBottomNavBar(
           currentIndex: _currentIndex,
           onTap: (index) {
@@ -30,7 +32,7 @@ class _MainAppState extends State<MainApp> {
           },
         ), */
         body: Padding(
-          padding: EdgeInsetsGeometry.fromLTRB(8, 28, 8, 0),
+          padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
           child: Center(child: HomeScreen()),
         ),
       ),
