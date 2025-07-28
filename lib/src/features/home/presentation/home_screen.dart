@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ctrl_buddy/widgets/interest_chip.dart';
-import 'package:ctrl_buddy/widgets/content_card.dart';
-import 'package:ctrl_buddy/widgets/message_menu_btn.dart';
+import 'package:ctrl_buddy/src/common/widgets/interest_chip.dart';
+import 'package:ctrl_buddy/src/common/widgets/content_card.dart';
+import 'package:ctrl_buddy/src/common/widgets/message_menu_btn.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

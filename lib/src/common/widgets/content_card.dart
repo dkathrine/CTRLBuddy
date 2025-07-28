@@ -76,64 +76,70 @@ class ContentCard extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Color(0xFF311447),
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(10),
+            InkWell(
+              splashColor: Color(0xFF642992).withAlpha(30),
+              onTap: () {
+                debugPrint('Card tapped.');
+              },
+              child: Ink(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Color(0xFF311447),
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(10),
+                  ),
                 ),
-              ),
-              child: Column(
-                spacing: 21,
-                children: [
-                  Row(
-                    spacing: 16,
-                    children: [
-                      CircleAvatar(
-                        radius: 20.00,
-                        backgroundImage: AssetImage(image),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: TextStyle(
-                                color: Color(0xFFF1F1F1),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              author,
-                              style: TextStyle(
-                                color: Color(0xFFF1F1F1),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                child: Column(
+                  spacing: 21,
+                  children: [
+                    Row(
+                      spacing: 16,
+                      children: [
+                        CircleAvatar(
+                          radius: 20.00,
+                          backgroundImage: AssetImage(image),
                         ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    desc,
-                    style: TextStyle(
-                      color: Color(0xFFF1F1F1),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: TextStyle(
+                                  color: Color(0xFFF1F1F1),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                author,
+                                style: TextStyle(
+                                  color: Color(0xFFF1F1F1),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                    Text(
+                      desc,
+                      style: TextStyle(
+                        color: Color(0xFFF1F1F1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
