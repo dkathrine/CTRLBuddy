@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   lucide_icons: ^0.257.0
 
 dev_dependencies:
@@ -20,3 +21,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+
+flutter_launcher_icons:
+    android: true
+    ios: true
+    image_path: assets/icon/icon.png
+    adaptive_icon_background: "#1A1A1A" # or your app color
+    adaptive_icon_foreground: "assets/icon/icon.png"
