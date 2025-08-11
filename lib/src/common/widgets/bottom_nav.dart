@@ -21,8 +21,8 @@ class _CustomBottomNavState extends State<CustomBottomNav>
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      decoration: const BoxDecoration(
-        color: Color(0xFF281E2E),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(top: BorderSide(color: Color(0xFF3A2F3F), width: 0.5)),
       ),
       child: Padding(
@@ -39,13 +39,13 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                   spacing: 8,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(item.icon, size: 24, color: Color(0xFFF1F1F1)),
+                    Icon(item.icon, size: 24 /* color: Color(0xFFF1F1F1) */),
                     Text(
                       item.title,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFFF1F1F1),
+                        //color: Color(0xFFF1F1F1),
                       ),
                     ),
                   ],

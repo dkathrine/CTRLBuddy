@@ -8,7 +8,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
@@ -36,14 +36,7 @@ class HomeScreen extends StatelessWidget {
             MsgMenuBtn(),
           ],
         ),
-        Text(
-          'Popular',
-          style: TextStyle(
-            fontSize: 48,
-            color: Color(0xFFF1F1F1),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text('Popular', style: Theme.of(context).textTheme.headlineLarge),
         Expanded(
           child: SingleChildScrollView(
             child: Wrap(

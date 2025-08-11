@@ -15,7 +15,7 @@ class _MsgMenuBtnState extends State<MsgMenuBtn> {
       width: 50,
       height: 50,
       decoration: BoxDecoration(
-        color: Color(0xFF281E2E),
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: Icon(LucideIcons.mail, size: 35, color: Color(0xFFF1F1F1)),

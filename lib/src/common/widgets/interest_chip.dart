@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class InterestChip extends StatelessWidget {
@@ -10,11 +11,7 @@ class InterestChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(2), // Border thickness
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF007BFF), Color(0xFFC800FF)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
+        gradient: Theme.of(context).accentGradient,
         borderRadius: BorderRadius.circular(10),
         boxShadow: <BoxShadow>[
           /*
@@ -38,10 +35,10 @@ class InterestChip extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
         decoration: BoxDecoration(
-          color: Color(0xFF311447),
+          color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(interest, style: TextStyle(color: Color(0xFFF1F1F1))),
+        child: Text(interest, style: Theme.of(context).textTheme.labelLarge),
       ),
     );
   }
