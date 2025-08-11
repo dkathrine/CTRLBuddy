@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class ContentCard extends StatelessWidget {
@@ -21,11 +22,7 @@ class ContentCard extends StatelessWidget {
       width: 360 /* ((MediaQuery.of(context).size.width / 2) - 19) */,
       height: 332,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF007BFF), Color(0xFFC800FF)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
+        gradient: Theme.of(context).accentGradient,
         borderRadius: BorderRadius.circular(12),
         boxShadow: <BoxShadow>[
           /* 
@@ -84,13 +81,13 @@ class ContentCard extends StatelessWidget {
               child: Ink(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Color(0xFF311447),
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.vertical(
                     bottom: Radius.circular(10),
                   ),
                 ),
                 child: Column(
-                  spacing: 21,
+                  spacing: 20,
                   children: [
                     Row(
                       spacing: 16,
@@ -105,21 +102,13 @@ class ContentCard extends StatelessWidget {
                             children: [
                               Text(
                                 title,
-                                style: TextStyle(
-                                  color: Color(0xFFF1F1F1),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
                                 author,
-                                style: TextStyle(
-                                  color: Color(0xFFF1F1F1),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -130,11 +119,7 @@ class ContentCard extends StatelessWidget {
                     ),
                     Text(
                       desc,
-                      style: TextStyle(
-                        color: Color(0xFFF1F1F1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
