@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/features/home/presentation/home_screen.dart';
 import 'package:ctrl_buddy/src/features/chat_overview/presentation/chat_overview.dart';
+import 'package:ctrl_buddy/src/features/notification_overview/presentation/notification_overview.dart';
+import 'package:ctrl_buddy/src/features/thread/presentation/thread.dart';
 import 'package:ctrl_buddy/src/common/widgets/bottom_nav.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 //import 'package:CTRLBuddy/widgets/bottom_nav_ai.dart';
@@ -32,7 +34,7 @@ class _MainAppState extends State<MainApp> {
         ), */
         body: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
-          child: Center(child: ChatOverview()),
+          child: Center(child: Thread()),
         ),
       ),
     );
