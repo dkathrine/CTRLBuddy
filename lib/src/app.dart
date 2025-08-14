@@ -5,6 +5,7 @@ import 'package:ctrl_buddy/src/features/notification_overview/presentation/notif
 import 'package:ctrl_buddy/src/features/thread/presentation/thread.dart';
 import 'package:ctrl_buddy/src/common/widgets/bottom_nav.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 //import 'package:CTRLBuddy/widgets/bottom_nav_ai.dart';
 
 class MainApp extends StatefulWidget {
@@ -15,7 +16,22 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  /* int _currentIndex = 0; */
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    HomeScreen(),
+    ChatOverview(),
+    NotificationOverview(),
+    Thread(),
+  ];
+
+  final List<NavItem> _navItems = [
+    NavItem(icon: LucideIcons.home, title: 'Home'),
+    NavItem(icon: LucideIcons.search, title: 'Explore'),
+    NavItem(icon: LucideIcons.bell, title: 'Notifications'),
+    NavItem(icon: LucideIcons.user, title: 'Profile'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +39,15 @@ class _MainAppState extends State<MainApp> {
       theme: AppTheme.themeData,
       home: Scaffold(
         //backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        bottomNavigationBar: CustomBottomNav(),
+        bottomNavigationBar: CustomBottomNav(
+          navItems: _navItems,
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+        ),
         /* bottomNavigationBar: CustomBottomNavBar(
           currentIndex: _currentIndex,
           onTap: (index) {
@@ -34,7 +58,7 @@ class _MainAppState extends State<MainApp> {
         ), */
         body: Padding(
           padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
-          child: Center(child: Thread()),
+          child: Center(child: _pages[_currentIndex]),
         ),
       ),
     );
