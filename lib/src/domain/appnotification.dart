@@ -1,12 +1,12 @@
 import 'package:uuid/uuid.dart';
 
-class Notification {
+class AppNotification {
   final String id;
   final String threadId;
   final String mentionId;
   final String notificationMsg;
 
-  Notification({
+  AppNotification({
     this.threadId = "",
     this.mentionId = "",
     required this.notificationMsg,

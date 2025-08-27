@@ -2,7 +2,7 @@ import 'package:ctrl_buddy/src/domain/user.dart';
 import 'package:ctrl_buddy/src/domain/chat.dart';
 import 'package:ctrl_buddy/src/domain/comment.dart';
 import 'package:ctrl_buddy/src/domain/message.dart';
-import 'package:ctrl_buddy/src/domain/notification.dart';
+import 'package:ctrl_buddy/src/domain/appnotification.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart';
 
 abstract class DatabaseRepository {
@@ -68,15 +68,15 @@ abstract class DatabaseRepository {
 
   /* Notifications */
   /* Read */
-  List<Notification> get notifications;
+  List<AppNotification> get notifications;
 
-  Notification? getNotification(String id);
+  AppNotification? getNotification(String id);
 
   /* Create */
-  Notification createNotification(Notification draft);
+  AppNotification createNotification(AppNotification draft);
 
   /* Update */
-  void updateNotification(Notification updated);
+  void updateNotification(AppNotification updated);
 
   /* Delete */
   void deleteNotification(String id);
