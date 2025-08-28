@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/chat_item.dart';
-import 'package:ctrl_buddy/src/common/widgets/message_menu_btn.dart';
 
 class ChatOverview extends StatelessWidget {
   const ChatOverview({super.key});
@@ -13,7 +12,7 @@ class ChatOverview extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Messages', style: Theme.of(context).textTheme.headlineLarge),
-            MsgMenuBtn(),
+            SizedBox.shrink(),
           ],
         ),
         SizedBox(height: 10),

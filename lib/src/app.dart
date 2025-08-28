@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/features/home/presentation/home_screen.dart';
 import 'package:ctrl_buddy/src/features/chat_overview/presentation/chat_overview.dart';
 import 'package:ctrl_buddy/src/features/notification_overview/presentation/notification_overview.dart';
-import 'package:ctrl_buddy/src/features/thread/presentation/thread.dart';
 import 'package:ctrl_buddy/src/common/widgets/bottom_nav.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-//import 'package:CTRLBuddy/widgets/bottom_nav_ai.dart';
+import 'package:ctrl_buddy/src/common/widgets/message_menu_btn.dart';
+import 'package:ctrl_buddy/src/features/profile/presentation/profile_screen.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
@@ -22,7 +22,7 @@ class _MainAppState extends State<MainApp> {
     HomeScreen(),
     ChatOverview(),
     NotificationOverview(),
-    Thread(),
+    ProfileScreen(),
   ];
 
   final List<NavItem> _navItems = [
@@ -48,17 +48,18 @@ class _MainAppState extends State<MainApp> {
             });
           },
         ),
-        /* bottomNavigationBar: CustomBottomNavBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-        ), */
-        body: Padding(
-          padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
-          child: Center(child: _pages[_currentIndex]),
+        body: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
+              child: Center(child: _pages[_currentIndex]),
+            ),
+            Positioned(
+              top: _currentIndex == 0 ? 23 : 32,
+              right: 16,
+              child: MsgMenuBtn(),
+            ),
+          ],
         ),
       ),
     );

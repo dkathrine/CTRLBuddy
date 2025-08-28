@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/interest_chip.dart';
 import 'package:ctrl_buddy/src/common/widgets/content_card.dart';
-import 'package:ctrl_buddy/src/common/widgets/message_menu_btn.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -33,7 +32,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             /* msg_button */
-            MsgMenuBtn(),
+            SizedBox(width: 50),
           ],
         ),
         Text('Popular', style: Theme.of(context).textTheme.headlineLarge),

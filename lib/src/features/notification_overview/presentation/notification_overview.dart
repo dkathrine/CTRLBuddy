@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ctrl_buddy/src/common/widgets/message_menu_btn.dart';
 import 'package:ctrl_buddy/src/common/widgets/notifications_item.dart';
 
 class NotificationOverview extends StatelessWidget {
@@ -16,7 +15,7 @@ class NotificationOverview extends StatelessWidget {
               'Notifications',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
-            MsgMenuBtn(),
+            SizedBox.shrink(),
           ],
         ),
         SizedBox(height: 17),
