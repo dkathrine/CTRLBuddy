@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             /* msg_button */
-            SizedBox(width: 50),
+            SizedBox(width: /* 5 */ 0),
           ],
         ),
         Text('Popular', style: Theme.of(context).textTheme.headlineLarge),

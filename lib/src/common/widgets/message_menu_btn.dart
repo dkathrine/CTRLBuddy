@@ -131,13 +131,6 @@ class _MsgMenuBtnState extends State<MsgMenuBtn>
   }
 }
 
-/// Paints the exact "two-ball" Figma construction but with rounded rectangles:
-/// - First (underlay): a gradient rounded rectangle grows from center (gradProgress).
-/// - Second (overlay): a background-colored rounded rectangle grows (bgProgress),
-///   stopping slightly smaller so it leaves a gradient ring (the "border").
-///
-/// Everything is clipped to the same rounded-rect as the button so
-/// the fill never bleeds outside the shape.
 class _TwoBubblePainter extends CustomPainter {
   _TwoBubblePainter({
     required this.gradProgress,

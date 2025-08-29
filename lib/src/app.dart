@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/features/explore_overview/presentation/explore_overview.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/features/home/presentation/home_screen.dart';
 import 'package:ctrl_buddy/src/features/chat_overview/presentation/chat_overview.dart';
@@ -20,7 +21,7 @@ class _MainAppState extends State<MainApp> {
 
   final List<Widget> _pages = [
     HomeScreen(),
-    ChatOverview(),
+    ExploreOverview(),
     NotificationOverview(),
     ProfileScreen(),
   ];
@@ -54,11 +55,11 @@ class _MainAppState extends State<MainApp> {
               padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
               child: Center(child: _pages[_currentIndex]),
             ),
-            Positioned(
+            /* Positioned(
               top: _currentIndex == 0 ? 23 : 32,
               right: 16,
               child: MsgMenuBtn(),
-            ),
+            ), */
           ],
         ),
       ),
