@@ -2,174 +2,217 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ctrl_buddy/src/common/widgets/comment.dart';
 import 'package:ctrl_buddy/src/common/widgets/message_bar.dart';
+import 'package:ctrl_buddy/src/domain/comment.dart' as model;
+import 'package:ctrl_buddy/src/domain/thread.dart' as model;
+import 'package:ctrl_buddy/src/domain/user.dart';
+import 'package:ctrl_buddy/src/data/mock_db.dart';
+import 'package:provider/provider.dart';
 
 class Thread extends StatefulWidget {
-  const Thread({
-    super.key,
-    this.username = "Username",
-    this.title = "Thread Title",
-    this.userImg = "assets/noodlecat.jpeg",
-    this.content =
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris non pellentesque odio. Sed porttitor vestibulum magna. Vivamus finibus quis lorem ac dictum. Maecenas nec elit pharetra odio consequat bibendum sollicitudin vel dolor.",
-    this.likes = 0,
-  });
+  const Thread({super.key, required this.id});
 
-  final String username;
-  final String title;
-  final String userImg;
-  final String content;
-  final int likes;
+  final String id;
 
   @override
   State<Thread> createState() => _ThreadState();
 }
 
 class _ThreadState extends State<Thread> {
+  late MockDatabase db;
+
+  late Future<ThreadData> _threadData;
+
+  @override
+  void initState() {
+    super.initState();
+    db = Provider.of<MockDatabase>(context, listen: false);
+    _threadData = db.getThread(widget.id).then((thread) async {
+      if (thread == null) throw Exception("Thread not found");
+      final author = await db.getUser(thread.userId);
+      final comments = await db.getThreadComments(widget.id);
+      return ThreadData(thread: thread, author: author, comments: comments);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      resizeToAvoidBottomInset: true,
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return FutureBuilder(
+      future: _threadData,
+      builder: (context, asyncSnapshot) {
+        if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (asyncSnapshot.hasError) {
+          return Center(child: Text('Error: ${asyncSnapshot.error}'));
+        }
+
+        final data = asyncSnapshot.data!;
+        final thread = data.thread;
+        final author = data.author!;
+        final comments = data.comments;
+
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          resizeToAvoidBottomInset: true,
+          body: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsetsGeometry.fromLTRB(16, 28, 16, 0),
+                child: Column(
                   children: [
                     Row(
-                      spacing: 8,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Icon(LucideIcons.arrowLeft, size: 42),
-                        ),
-                        Column(
+                        Row(
                           spacing: 8,
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              spacing: 8,
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: AssetImage(widget.userImg),
-                                  radius: 16,
-                                ),
-                                Text(
-                                  widget.username,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
-                                ),
-                              ],
+                            GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Icon(LucideIcons.arrowLeft, size: 42),
                             ),
-                            Text(
-                              widget.title,
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    /* GestureDetector(
-                      child: Icon(LucideIcons.moreVertical, size: 35),
-                    ), */
-                  ],
-                ),
-                SizedBox(height: 8),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Wrap(
-                      children: [
-                        Column(
-                          children: [
                             Column(
-                              spacing: 12,
+                              spacing: 8,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  widget.content,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  spacing: 8,
                                   children: [
-                                    Row(
-                                      spacing: 4,
-                                      children: [
-                                        GestureDetector(
-                                          child: Icon(
-                                            LucideIcons.heart,
-                                            size: 24,
-                                          ),
-                                        ),
-                                        Text(
-                                          widget.likes.toString(),
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.labelLarge,
-                                        ),
-                                      ],
-                                    ),
-                                    GestureDetector(
-                                      child: Icon(
-                                        LucideIcons.bookmark,
-                                        size: 24,
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                        author.profilePicture,
                                       ),
+                                      radius: 16,
+                                    ),
+                                    Text(
+                                      author.name,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium,
                                     ),
                                   ],
                                 ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: Text(
+                                    thread.title,
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.headlineMedium,
+                                  ),
+                                ),
                               ],
-                            ),
-                            SizedBox(height: 8),
-                            Divider(
-                              color: Color(0xFF666666),
-                              thickness: 1,
-                              height: 1,
                             ),
                           ],
                         ),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
-                        Comment(),
+                        /* GestureDetector(
+                          child: Icon(LucideIcons.moreVertical, size: 35),
+                        ), */
                       ],
                     ),
+                    SizedBox(height: 8),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          children: [
+                            Column(
+                              children: [
+                                Column(
+                                  spacing: 12,
+                                  children: [
+                                    Text(
+                                      thread.message,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          spacing: 4,
+                                          children: [
+                                            GestureDetector(
+                                              child: Icon(
+                                                LucideIcons.heart,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            Text(
+                                              thread.likes.toString(),
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.labelLarge,
+                                            ),
+                                          ],
+                                        ),
+                                        GestureDetector(
+                                          child: Icon(
+                                            LucideIcons.bookmark,
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Divider(
+                                  color: Color(0xFF666666),
+                                  thickness: 1,
+                                  height: 1,
+                                ),
+                              ],
+                            ),
+
+                            Column(
+                              children: comments.map((c) {
+                                return Comment(
+                                  userId: c.userId,
+                                  threadId: c.threadId,
+                                  comment: c.comment,
+                                  likes: c.likes,
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 48,
+                left: 26,
+                right: 26,
+                child: SafeArea(
+                  child: MessageBar(
+                    hintText: "Write a comment...",
+                    onSend: () {
+                      debugPrint("Comment posted!");
+                    },
                   ),
                 ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 48,
-            left: 26,
-            right: 26,
-            child: SafeArea(
-              child: MessageBar(
-                hintText: "Write a comment...",
-                onSend: () {
-                  debugPrint("Comment posted!");
-                },
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
+}
+
+class ThreadData {
+  final model.Thread thread;
+  final User? author;
+  final List<model.Comment> comments;
+
+  ThreadData({
+    required this.thread,
+    required this.author,
+    required this.comments,
+  });
 }

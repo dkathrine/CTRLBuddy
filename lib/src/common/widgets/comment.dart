@@ -4,6 +4,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 class Comment extends StatefulWidget {
   const Comment({
     super.key,
+    required this.userId,
+    required this.threadId,
     this.username = "Name",
     this.likes = 0,
     this.imgPath = "assets/noodlecat.jpeg",
@@ -12,6 +14,8 @@ class Comment extends StatefulWidget {
     this.time = "2s ago",
   });
 
+  final String userId;
+  final String threadId;
   final String username;
   final int likes;
   final String imgPath;
@@ -31,6 +35,7 @@ class _CommentState extends State<Comment> {
         children: [
           Column(
             spacing: 12,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 spacing: 8,

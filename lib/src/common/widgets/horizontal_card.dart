@@ -23,7 +23,9 @@ class HorizontalCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => Thread()),
+        MaterialPageRoute(
+          builder: (BuildContext context) => Thread(id: threadId),
+        ),
       ),
       child: Container(
         width: 360,

@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:ctrl_buddy/src/common/widgets/interest_chip.dart';
 import 'package:ctrl_buddy/src/common/widgets/content_card.dart';
+import 'package:ctrl_buddy/src/domain/thread.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late MockDatabase db;
+
+  late Future<List<Thread>> _popularThreads;
+
+  @override
+  void initState() {
+    super.initState();
+    db = Provider.of<MockDatabase>(context, listen: false);
+    _popularThreads = db.popularThreads;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,49 +56,42 @@ class HomeScreen extends StatelessWidget {
         ),
         Text('Popular', style: Theme.of(context).textTheme.headlineLarge),
         Expanded(
-          child: SingleChildScrollView(
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 22,
-              runSpacing: 22,
-              children: [
-                ContentCard(
-                  image: 'assets/noodlecat.jpeg',
-                  title: 'title',
-                  author: 'author',
-                  desc:
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean interdum magna neque, vel malesuada turpis convallis a. In faucibus ante ac magna lobortis dapibus. In accumsan turpis in justo aliquam, commodo dignissim sapien lacinia. Nullam fringilla fringilla mattis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum eu faucibus neque. Nullam commodo pharetra ex vel facilisis. In aliquam sit amet massa quis sagittis.',
+          child: FutureBuilder(
+            future: _popularThreads,
+            builder: (context, asyncSnapshot) {
+              if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (asyncSnapshot.hasError) {
+                return Center(child: Text('Error: ${asyncSnapshot.error}'));
+              } else if (!asyncSnapshot.hasData ||
+                  asyncSnapshot.data!.isEmpty) {
+                return const Center(child: Text('No popular threads found.'));
+              }
+
+              final threads = asyncSnapshot.data!;
+
+              return SingleChildScrollView(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 22,
+                  runSpacing: 22,
+                  children: threads.map((thread) {
+                    return FutureBuilder(
+                      future: db.getUser(thread.userId),
+                      builder: (context, snapshot) {
+                        return ContentCard(
+                          threadId: thread.id,
+                          image: 'assets/noodlecat.jpeg',
+                          title: thread.title,
+                          author: snapshot.data?.name ?? "Unknown",
+                          desc: thread.message,
+                        );
+                      },
+                    );
+                  }).toList(),
                 ),
-                ContentCard(
-                  image: 'assets/noodlecat.jpeg',
-                  title: 'title',
-                  author: 'author',
-                  desc:
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean interdum magna neque, vel malesuada turpis convallis a. In faucibus ante ac magna lobortis dapibus. In accumsan turpis in justo aliquam, commodo dignissim sapien lacinia. Nullam fringilla fringilla mattis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum eu faucibus neque. Nullam commodo pharetra ex vel facilisis. In aliquam sit amet massa quis sagittis.',
-                ),
-                ContentCard(
-                  image: 'assets/noodlecat.jpeg',
-                  title: 'title',
-                  author: 'author',
-                  desc:
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean interdum magna neque, vel malesuada turpis convallis a. In faucibus ante ac magna lobortis dapibus. In accumsan turpis in justo aliquam, commodo dignissim sapien lacinia. Nullam fringilla fringilla mattis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum eu faucibus neque. Nullam commodo pharetra ex vel facilisis. In aliquam sit amet massa quis sagittis.',
-                ),
-                ContentCard(
-                  image: 'assets/noodlecat.jpeg',
-                  title: 'title',
-                  author: 'author',
-                  desc:
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean interdum magna neque, vel malesuada turpis convallis a. In faucibus ante ac magna lobortis dapibus. In accumsan turpis in justo aliquam, commodo dignissim sapien lacinia. Nullam fringilla fringilla mattis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum eu faucibus neque. Nullam commodo pharetra ex vel facilisis. In aliquam sit amet massa quis sagittis.',
-                ),
-                ContentCard(
-                  image: 'assets/noodlecat.jpeg',
-                  title: 'title',
-                  author: 'author',
-                  desc:
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean interdum magna neque, vel malesuada turpis convallis a. In faucibus ante ac magna lobortis dapibus. In accumsan turpis in justo aliquam, commodo dignissim sapien lacinia. Nullam fringilla fringilla mattis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum eu faucibus neque. Nullam commodo pharetra ex vel facilisis. In aliquam sit amet massa quis sagittis.',
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ],

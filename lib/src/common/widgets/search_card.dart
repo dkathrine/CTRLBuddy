@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SearchCard extends StatelessWidget {
-  const SearchCard({super.key});
+  const SearchCard({super.key, required this.gameName});
+
+  final String gameName;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class SearchCard extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    "League of Legends",
+                    gameName,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),

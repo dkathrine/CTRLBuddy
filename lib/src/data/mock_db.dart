@@ -30,87 +30,264 @@ import 'package:ctrl_buddy/src/domain/appnotification.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart';
 
 class MockDatabase implements DatabaseRepository {
-  /* Users */
-  List<User> _users = [User(name: "John Doe"), User(name: "Max Mustermann")];
+  /* Dummy Data Initialization */
+  late final List<User> _users;
+  late final List<Thread> _threads;
+  late final List<Chat> _chats;
+  late final List<Comment> _comments;
+  late final List<AppNotification> _notifications;
+  late final List<Message> _messages;
 
-  /* Threads */
-  List<Thread> _threads = [];
+  MockDatabase() {
+    // Create Users
+    final user1 = User(
+      name: "John Doe",
+      bio: "Gamer and developer",
+      profilePicture: "assets/noodlecat.jpeg",
+      interests: ["RPG", "FPS"],
+    );
+    final user2 = User(
+      name: "Max Mustermann",
+      bio: "Casual player",
+      profilePicture: "assets/noodlecat.jpeg",
+      interests: ["MMORPG", "Puzzle"],
+    );
+    final user3 = User(
+      name: "Alice Wonder",
+      bio: "Pro eSports player",
+      profilePicture: "assets/noodlecat.jpeg",
+      interests: ["MOBA", "Strategy"],
+    );
 
-  /* Chats */
-  List<Chat> _chats = [];
+    _users = [user1, user2, user3];
 
-  /* Comments */
-  List<Comment> _comments = [];
+    // Create Threads
+    final thread1 = Thread(
+      userId: user1.id,
+      gameName: "Elder Scrolls V: Skyrim",
+      title: "Best mods for immersion?",
+      message: "Looking for mods that make Skyrim more immersive!",
+      likes: 15,
+    );
 
-  /* Notifications */
-  List<AppNotification> _notifications = [];
+    final thread2 = Thread(
+      userId: user2.id,
+      gameName: "World of Warcraft",
+      title: "Best class for solo play?",
+      message: "Returning player here, what class is best for solo leveling?",
+      likes: 8,
+    );
 
-  /* Messages */
-  List<Message> _messages = [];
+    final thread3 = Thread(
+      userId: user3.id,
+      gameName: "League of Legends",
+      title: "Best champs for mid lane?",
+      message: "I'm trying to climb mid lane this season, any tips?",
+      likes: 20,
+    );
+
+    _threads = [thread1, thread2, thread3];
+
+    // Link Threads to Users
+    user1.threads.add(thread1.id);
+    user2.threads.add(thread2.id);
+    user3.threads.add(thread3.id);
+
+    // Create Comments
+    final comment1 = Comment(
+      userId: user2.id,
+      threadId: thread1.id,
+      comment: "Check out 'Immersive Citizens' and 'Frostfall'!",
+      likes: 5,
+    );
+
+    final comment2 = Comment(
+      userId: user3.id,
+      threadId: thread1.id,
+      comment: "Don't forget 'SkyUI', it's a must-have!",
+      likes: 3,
+    );
+
+    final comment3 = Comment(
+      userId: user1.id,
+      threadId: thread2.id,
+      comment: "Hunter is great for solo play!",
+      likes: 2,
+    );
+
+    _comments = [comment1, comment2, comment3];
+
+    // Attach Comments to Threads
+    thread1.comments.addAll([comment1, comment2]);
+    thread2.comments.add(comment3);
+
+    // Create Messages
+    final message1 = Message(
+      userId: user1.id,
+      name: user1.name,
+      message: "Hey Max, are you online?",
+      dateTime: "2025-09-03 10:00",
+    );
+
+    final message2 = Message(
+      userId: user2.id,
+      name: user2.name,
+      message: "Yeah, let's play later!",
+      dateTime: "2025-09-03 10:05",
+    );
+
+    final message3 = Message(
+      userId: user3.id,
+      name: user3.name,
+      message: "Good luck with your ranked games!",
+      dateTime: "2025-09-03 11:00",
+    );
+
+    _messages = [message1, message2, message3];
+
+    // Create Chats
+    final chat1 = Chat(
+      participantId1: user1.id,
+      participantId2: user2.id,
+      messages: [message1, message2],
+    );
+
+    final chat2 = Chat(
+      participantId1: user2.id,
+      participantId2: user3.id,
+      messages: [message3],
+    );
+
+    _chats = [chat1, chat2];
+
+    // Create Notifications
+    final notification1 = AppNotification(
+      threadId: thread1.id,
+      mentionId: user3.id,
+      notificationMsg: "${user3.name} replied to your thread",
+    );
+
+    final notification2 = AppNotification(
+      threadId: thread2.id,
+      mentionId: user1.id,
+      notificationMsg: "${user1.name} commented on your thread",
+    );
+
+    _notifications = [notification1, notification2];
+  }
+
+  /* Simulated delay */
+  Future<void> _simulatedDelay([int ms = 2000]) =>
+      Future.delayed(Duration(milliseconds: ms));
 
   /* User */
   /* Read */
-  List<User> get users => List.unmodifiable(_users);
+  @override
+  Future<List<User>> get users async {
+    await _simulatedDelay();
+    return List.unmodifiable(_users);
+  }
 
-  User? getUser(String id) => _users
-      .where((p) => p.id == id)
-      .cast<User?>()
-      .firstWhere((p) => p != null, orElse: () => null);
+  @override
+  Future<User?> getUser(String id) async {
+    await _simulatedDelay();
+    return _users
+        .where((p) => p.id == id)
+        .cast<User?>()
+        .firstWhere((p) => p != null, orElse: () => null);
+  }
 
   /* Create */
-  User createUser(User draft) {
+  @override
+  Future<User> createUser(User draft) async {
+    await _simulatedDelay();
     _users.add(draft);
     return draft;
   }
 
   /* Update */
-  void updateUser(User updated) {
+  @override
+  Future<void> updateUser(User updated) async {
+    await _simulatedDelay();
     final index = _users.indexWhere((p) => p.id == updated.id);
     if (index != -1) _users[index] = updated;
   }
 
   /* Delete */
-  void deleteUser(String id) {
+  @override
+  Future<void> deleteUser(String id) async {
+    await _simulatedDelay();
     _users.removeWhere((p) => p.id == id);
   }
 
   /* Chats */
   /* Read */
-  List<Chat> get chats => List.unmodifiable(_chats);
+  @override
+  Future<List<Chat>> get chats async {
+    await _simulatedDelay();
+    return List.unmodifiable(_chats);
+  }
 
-  Chat? getChat(String id) => _chats
-      .where((p) => p.id == id)
-      .cast<Chat?>()
-      .firstWhere((p) => p != null, orElse: () => null);
+  @override
+  Future<Chat?> getChat(String id) async {
+    await _simulatedDelay();
+    return _chats
+        .where((p) => p.id == id)
+        .cast<Chat?>()
+        .firstWhere((p) => p != null, orElse: () => null);
+  }
 
   /* Create */
-  Chat createChat(Chat draft) {
+  @override
+  Future<Chat> createChat(Chat draft) async {
+    await _simulatedDelay();
     _chats.add(draft);
     return draft;
   }
 
   /* Update */
-  void updateChat(Chat updated) {
+  @override
+  Future<void> updateChat(Chat updated) async {
+    await _simulatedDelay();
     final index = _chats.indexWhere((p) => p.id == updated.id);
     if (index != -1) _chats[index] = updated;
   }
 
   /* Delete */
-  void deleteChat(String id) {
+  @override
+  Future<void> deleteChat(String id) async {
+    await _simulatedDelay();
     _chats.removeWhere((p) => p.id == id);
   }
 
   /* Comments */
   /* Read */
-  List<Comment> get comments => List.unmodifiable(_comments);
+  @override
+  Future<List<Comment>> get comments async {
+    await _simulatedDelay();
+    return List.unmodifiable(_comments);
+  }
 
-  Comment? getComment(String id) => _comments
-      .where((p) => p.id == id)
-      .cast<Comment?>()
-      .firstWhere((p) => p != null, orElse: () => null);
+  @override
+  Future<List<Comment>> getThreadComments(String threadId) async {
+    await _simulatedDelay();
+    return _comments.where((c) => c.threadId == threadId).toList();
+  }
+
+  @override
+  Future<Comment?> getComment(String id) async {
+    await _simulatedDelay();
+    return _comments
+        .where((p) => p.id == id)
+        .cast<Comment?>()
+        .firstWhere((p) => p != null, orElse: () => null);
+  }
 
   /* Create */
-  Comment createComment(Comment draft) {
+  @override
+  Future<Comment> createComment(Comment draft) async {
+    await _simulatedDelay();
+
     _comments.add(draft);
 
     final thread = _threads.firstWhere(
@@ -123,7 +300,10 @@ class MockDatabase implements DatabaseRepository {
   }
 
   /* Update */
-  void updateComment(Comment updated) {
+  @override
+  Future<void> updateComment(Comment updated) async {
+    await _simulatedDelay();
+
     final index = _comments.indexWhere((p) => p.id == updated.id);
     if (index != -1) _comments[index] = updated;
 
@@ -138,7 +318,10 @@ class MockDatabase implements DatabaseRepository {
   }
 
   /* Delete */
-  void deleteComment(String id) {
+  @override
+  Future<void> deleteComment(String id) async {
+    await _simulatedDelay();
+
     _comments.removeWhere((p) => p.id == id);
 
     final comment = _comments
@@ -156,85 +339,128 @@ class MockDatabase implements DatabaseRepository {
 
   /* Messages */
   /* Read */
-  List<Message> get messages => List.unmodifiable(_messages);
+  @override
+  Future<List<Message>> get messages async {
+    await _simulatedDelay();
+    return List.unmodifiable(_messages);
+  }
 
-  Message? getMessage(String id) => _messages
-      .where((p) => p.id == id)
-      .cast<Message?>()
-      .firstWhere((p) => p != null, orElse: () => null);
+  @override
+  Future<Message?> getMessage(String id) async {
+    await _simulatedDelay();
+    return _messages
+        .where((p) => p.id == id)
+        .cast<Message?>()
+        .firstWhere((p) => p != null, orElse: () => null);
+  }
 
   /* Create */
-  Message createMessage(Message draft) {
+  @override
+  Future<Message> createMessage(Message draft) async {
+    await _simulatedDelay();
     _messages.add(draft);
     return draft;
   }
 
   /* Update */
-  void updateMessage(Message updated) {
+  @override
+  Future<void> updateMessage(Message updated) async {
+    await _simulatedDelay();
     final index = _messages.indexWhere((p) => p.id == updated.id);
     if (index != -1) _messages[index] = updated;
   }
 
   /* Delete */
-  void deleteMessage(String id) {
+  @override
+  Future<void> deleteMessage(String id) async {
+    await _simulatedDelay();
     _messages.removeWhere((p) => p.id == id);
   }
 
   /* Notifications */
   /* Read */
-  List<AppNotification> get notifications => List.unmodifiable(_notifications);
+  @override
+  Future<List<AppNotification>> get notifications async {
+    await _simulatedDelay();
+    return List.unmodifiable(_notifications);
+  }
 
-  AppNotification? getNotification(String id) => _notifications
-      .where((p) => p.id == id)
-      .cast<AppNotification?>()
-      .firstWhere((p) => p != null, orElse: () => null);
+  @override
+  Future<AppNotification?> getNotification(String id) async {
+    await _simulatedDelay();
+    return _notifications
+        .where((p) => p.id == id)
+        .cast<AppNotification?>()
+        .firstWhere((p) => p != null, orElse: () => null);
+  }
 
   /* Create */
-  AppNotification createNotification(AppNotification draft) {
+  @override
+  Future<AppNotification> createNotification(AppNotification draft) async {
+    await _simulatedDelay();
     _notifications.add(draft);
     return draft;
   }
 
   /* Update */
-  void updateNotification(AppNotification updated) {
+  @override
+  Future<void> updateNotification(AppNotification updated) async {
+    await _simulatedDelay();
     final index = _notifications.indexWhere((p) => p.id == updated.id);
     if (index != -1) _notifications[index] = updated;
   }
 
   /* Delete */
-  void deleteNotification(String id) {
+  @override
+  Future<void> deleteNotification(String id) async {
+    await _simulatedDelay();
     _notifications.removeWhere((p) => p.id == id);
   }
 
   /* Threads */
   /* Read */
-  List<Thread> get threads => List.unmodifiable(_threads);
+  @override
+  Future<List<Thread>> get threads async {
+    await _simulatedDelay();
+    return List.unmodifiable(_threads);
+  }
 
-  List<Thread> get popularThreads {
-    final sorted = [...threads];
+  Future<List<Thread>> get popularThreads async {
+    await _simulatedDelay();
+    final sorted = [..._threads];
     sorted.sort((a, b) => b.likes.compareTo(a.likes));
     return List.unmodifiable(sorted.take(10));
   }
 
-  Thread? getThread(String id) => _threads
-      .where((p) => p.id == id)
-      .cast<Thread?>()
-      .firstWhere((p) => p != null, orElse: () => null);
+  @override
+  Future<Thread?> getThread(String id) async {
+    await _simulatedDelay();
+    return _threads
+        .where((p) => p.id == id)
+        .cast<Thread?>()
+        .firstWhere((p) => p != null, orElse: () => null);
+  }
 
   /* Create */
-  Thread createThread(Thread draft) {
+  @override
+  Future<Thread> createThread(Thread draft) async {
+    await _simulatedDelay();
     _threads.add(draft);
     return draft;
   }
 
   /* Update */
-  void updateThread(Thread updated) {
+  @override
+  Future<void> updateThread(Thread updated) async {
+    await _simulatedDelay();
     final index = _threads.indexWhere((p) => p.id == updated.id);
     if (index != -1) _threads[index] = updated;
   }
 
   /* Delete */
-  void deleteThread(String id) {
+  @override
+  Future<void> deleteThread(String id) async {
+    await _simulatedDelay();
     _threads.removeWhere((p) => p.id == id);
   }
 }

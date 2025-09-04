@@ -1,4 +1,5 @@
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
+import 'package:ctrl_buddy/src/features/thread/presentation/thread.dart';
 import 'package:flutter/material.dart';
 
 class NotificationsItem extends StatefulWidget {
@@ -9,12 +10,14 @@ class NotificationsItem extends StatefulWidget {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris non pellentesque odio.",
     this.time = "2s ago",
     this.imgPath = "assets/noodlecat.jpeg",
+    required this.threadId,
   });
 
   final bool isMention;
   final String notification;
   final String time;
   final String imgPath;
+  final String threadId;
 
   @override
   State<NotificationsItem> createState() => _NotificationsItemState();
@@ -24,6 +27,12 @@ class _NotificationsItemState extends State<NotificationsItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => Thread(id: widget.threadId),
+        ),
+      ),
       child: Padding(
         padding: EdgeInsetsGeometry.only(bottom: 24),
         child: Row(

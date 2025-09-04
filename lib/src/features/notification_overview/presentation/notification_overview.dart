@@ -1,8 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/notifications_item.dart';
+import 'package:ctrl_buddy/src/data/mock_db.dart';
+import 'package:ctrl_buddy/src/domain/appnotification.dart';
+import 'package:provider/provider.dart';
 
-class NotificationOverview extends StatelessWidget {
+class NotificationOverview extends StatefulWidget {
   const NotificationOverview({super.key});
+
+  @override
+  State<NotificationOverview> createState() => _NotificationOverviewState();
+}
+
+class _NotificationOverviewState extends State<NotificationOverview> {
+  late MockDatabase db;
+
+  late Future<List<AppNotification>> _notifications;
+
+  @override
+  void initState() {
+    super.initState();
+    db = Provider.of<MockDatabase>(context, listen: false);
+    _notifications = db.notifications;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,37 +61,31 @@ class NotificationOverview extends StatelessWidget {
         ),
         SizedBox(height: 11),
         Expanded(
-          child: SingleChildScrollView(
-            child: Wrap(
-              children: [
-                NotificationsItem(isMention: true),
-                NotificationsItem(),
-                NotificationsItem(),
-                NotificationsItem(isMention: true),
-                NotificationsItem(),
-                NotificationsItem(isMention: true),
-                NotificationsItem(isMention: true),
-                NotificationsItem(isMention: true),
-                NotificationsItem(),
-                NotificationsItem(),
-                NotificationsItem(),
-                NotificationsItem(isMention: true),
-                NotificationsItem(),
-                NotificationsItem(isMention: true),
-                NotificationsItem(),
-                NotificationsItem(),
-                NotificationsItem(isMention: true),
-                NotificationsItem(isMention: true),
-                NotificationsItem(),
-                NotificationsItem(),
-                NotificationsItem(),
-                NotificationsItem(isMention: true),
-                NotificationsItem(isMention: true),
-                NotificationsItem(isMention: true),
-                NotificationsItem(),
-                NotificationsItem(),
-              ],
-            ),
+          child: FutureBuilder(
+            future: _notifications,
+            builder: (context, asyncSnapshot) {
+              if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (asyncSnapshot.hasError) {
+                return Center(child: Text('Error: ${asyncSnapshot.error}'));
+              } else if (!asyncSnapshot.hasData ||
+                  asyncSnapshot.data!.isEmpty) {
+                return const Center(child: Text('No notifications found.'));
+              }
+
+              final notifications = asyncSnapshot.data!;
+
+              return SingleChildScrollView(
+                child: Wrap(
+                  children: notifications.map((notification) {
+                    return NotificationsItem(
+                      notification: notification.notificationMsg,
+                      threadId: notification.threadId,
+                    );
+                  }).toList(),
+                ),
+              );
+            },
           ),
         ),
       ],

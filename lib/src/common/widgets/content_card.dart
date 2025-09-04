@@ -5,12 +5,14 @@ import 'package:ctrl_buddy/src/features/thread/presentation/thread.dart';
 class ContentCard extends StatelessWidget {
   const ContentCard({
     super.key,
+    required this.threadId,
     required this.image,
     required this.title,
     required this.author,
     required this.desc,
   });
 
+  final String threadId;
   final dynamic image;
   final String title;
   final String author;
@@ -21,7 +23,9 @@ class ContentCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => Thread()),
+        MaterialPageRoute(
+          builder: (BuildContext context) => Thread(id: threadId),
+        ),
       ),
       child: Container(
         /* padding: EdgeInsets.all(1), */
@@ -79,56 +83,60 @@ class ContentCard extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              InkWell(
-                splashColor: Color(0xFF642992).withAlpha(30),
-                child: Ink(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(10),
+              Expanded(
+                child: InkWell(
+                  splashColor: Color(0xFF642992).withAlpha(30),
+                  child: Ink(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(10),
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    spacing: 20,
-                    children: [
-                      Row(
-                        spacing: 16,
-                        children: [
-                          CircleAvatar(
-                            radius: 20.00,
-                            backgroundImage: AssetImage(image),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  title,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  author,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                    child: Column(
+                      spacing: 20,
+                      children: [
+                        Row(
+                          spacing: 16,
+                          children: [
+                            CircleAvatar(
+                              radius: 20.00,
+                              backgroundImage: AssetImage(image),
                             ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        desc,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    title,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    author,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          desc,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
