@@ -83,4 +83,5 @@ class AppTheme {
 
 extension AppThemeExtension on ThemeData {
   LinearGradient get accentGradient => AppTheme.accentGradient;
+  Color get textColor => AppTheme.textColor;
 }

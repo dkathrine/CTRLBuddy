@@ -18,7 +18,8 @@ class _ExploreOverviewState extends State<ExploreOverview> {
   @override
   void initState() {
     super.initState();
-    final db = Provider.of<MockDatabase>(context, listen: false);
+    //final db = Provider.of<MockDatabase>(context, listen: false);
+    final db = context.read<MockDatabase>();
     _threads = db.threads;
   }
 

@@ -1,0 +1,49 @@
+import 'package:ctrl_buddy/src/theme/app_theme.dart';
+import 'package:flutter/material.dart';
+
+class Button extends StatelessWidget {
+  const Button({super.key, required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(2), // Border thickness
+        decoration: BoxDecoration(
+          gradient: Theme.of(context).accentGradient,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: <BoxShadow>[
+            /*
+              box-shadow: 
+                0px 4px 8px 3px rgba(0, 0, 0, 0.15), 
+                0px 1px 3px 0px rgba(0, 0, 0, 0.30);
+            */
+            BoxShadow(
+              offset: Offset(0, 4),
+              blurRadius: 8,
+              spreadRadius: 3,
+              color: Colors.black.withValues(alpha: 0.15),
+            ),
+            BoxShadow(
+              offset: Offset(0, 1),
+              blurRadius: 3,
+              color: Colors.black.withValues(alpha: 0.30),
+            ),
+          ],
+        ),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(label, style: Theme.of(context).textTheme.bodySmall),
+        ),
+      ),
+    );
+  }
+}

@@ -20,7 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    db = Provider.of<MockDatabase>(context, listen: false);
+    //db = Provider.of<MockDatabase>(context, listen: false);
+    db = context.read<MockDatabase>();
     _popularThreads = db.popularThreads;
   }
 
