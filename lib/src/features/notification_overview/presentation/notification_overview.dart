@@ -19,7 +19,8 @@ class _NotificationOverviewState extends State<NotificationOverview> {
   @override
   void initState() {
     super.initState();
-    db = Provider.of<MockDatabase>(context, listen: false);
+    //db = Provider.of<MockDatabase>(context, listen: false);
+    db = context.read<MockDatabase>();
     _notifications = db.notifications;
   }
 

@@ -2,6 +2,8 @@ import 'package:ctrl_buddy/src/common/widgets/horizontal_card.dart';
 import 'package:ctrl_buddy/src/common/widgets/interest_chip.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ctrl_buddy/src/data/auth_repository.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -18,6 +20,10 @@ class ProfileScreen extends StatelessWidget {
     'Overwatch',
   ];
 
+  Future<void> _signOut(BuildContext context) async {
+    await context.read<AuthRepository>().signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -28,6 +34,10 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text('Profile', style: Theme.of(context).textTheme.headlineLarge),
               SizedBox.shrink(),
+              IconButton(
+                onPressed: () => _signOut(context),
+                icon: Icon(Icons.logout),
+              ),
             ],
           ),
           SizedBox(height: 2),

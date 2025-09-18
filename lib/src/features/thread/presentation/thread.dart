@@ -25,7 +25,8 @@ class _ThreadState extends State<Thread> {
   @override
   void initState() {
     super.initState();
-    db = Provider.of<MockDatabase>(context, listen: false);
+    //db = Provider.of<MockDatabase>(context, listen: false);
+    db = context.read<MockDatabase>();
     _threadData = db.getThread(widget.id).then((thread) async {
       if (thread == null) throw Exception("Thread not found");
       final author = await db.getUser(thread.userId);
