@@ -7,8 +7,24 @@ class AppNotification {
   final String notificationMsg;
 
   AppNotification({
+    required this.id,
     this.threadId = "",
     this.mentionId = "",
     required this.notificationMsg,
-  }) : id = Uuid().v4();
+  });
+
+  Map<String, dynamic> toMap() => {
+    'threadId': threadId,
+    'mentionId': mentionId,
+    'notificationMsg': notificationMsg,
+  };
+
+  factory AppNotification.fromMap(String id, Map<String, dynamic> map) {
+    return AppNotification(
+      id: id,
+      threadId: map['threadId'],
+      mentionId: map['mentionId'],
+      notificationMsg: map['notificationMsg'] ?? "",
+    );
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ctrl_buddy/src/data/mock_db.dart';
@@ -13,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late MockDatabase db;
+  late DatabaseRepository db;
 
   late Future<List<Thread>> _popularThreads;
 
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     //db = Provider.of<MockDatabase>(context, listen: false);
-    db = context.read<MockDatabase>();
+    db = context.read<DatabaseRepository>();
     _popularThreads = db.popularThreads;
   }
 

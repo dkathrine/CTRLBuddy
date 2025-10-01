@@ -148,36 +148,41 @@ class MockDatabase implements DatabaseRepository {
 
     // Create Messages
     final message1 = Message(
+      id: _uuid.v4(),
       userId: user1.id,
       name: user1.name,
       message: "Hey Max, are you online?",
-      dateTime: "2025-09-03 10:00",
+      //dateTime: "2025-09-03 10:00",
     );
 
     final message2 = Message(
+      id: _uuid.v4(),
       userId: user2.id,
       name: user2.name,
       message: "Yeah, let's play later!",
-      dateTime: "2025-09-03 10:05",
+      //dateTime: "2025-09-03 10:05",
     );
 
     final message3 = Message(
+      id: _uuid.v4(),
       userId: user3.id,
       name: user3.name,
       message: "Good luck with your ranked games!",
-      dateTime: "2025-09-03 11:00",
+      //dateTime: "2025-09-03 11:00",
     );
 
     _messages = [message1, message2, message3];
 
     // Create Chats
     final chat1 = Chat(
+      id: _uuid.v4(),
       participantId1: user1.id,
       participantId2: user2.id,
       messages: [message1, message2],
     );
 
     final chat2 = Chat(
+      id: _uuid.v4(),
       participantId1: user2.id,
       participantId2: user3.id,
       messages: [message3],
@@ -187,12 +192,14 @@ class MockDatabase implements DatabaseRepository {
 
     // Create Notifications
     final notification1 = AppNotification(
+      id: _uuid.v4(),
       threadId: thread1.id,
       mentionId: user3.id,
       notificationMsg: "${user3.name} replied to your thread",
     );
 
     final notification2 = AppNotification(
+      id: _uuid.v4(),
       threadId: thread2.id,
       mentionId: user1.id,
       notificationMsg: "${user1.name} commented on your thread",

@@ -1,4 +1,5 @@
 import 'package:ctrl_buddy/src/data/auth_repository.dart';
+import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ctrl_buddy/src/common/widgets/comment.dart';
@@ -19,7 +20,7 @@ class Thread extends StatefulWidget {
 }
 
 class _ThreadState extends State<Thread> {
-  late MockDatabase db;
+  late DatabaseRepository db;
 
   late Future<ThreadData> _threadData;
 
@@ -27,7 +28,7 @@ class _ThreadState extends State<Thread> {
   void initState() {
     super.initState();
     //db = Provider.of<MockDatabase>(context, listen: false);
-    db = context.read<MockDatabase>();
+    db = context.read<DatabaseRepository>();
     _loadThread();
   }
 

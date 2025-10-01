@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +41,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     setState(() => _loading = true);
 
     try {
-      final db = context.read<MockDatabase>();
+      final db = context.read<DatabaseRepository>();
 
       final newUser = User(
         id: widget.uid,
