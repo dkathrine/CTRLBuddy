@@ -102,10 +102,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      /* Text(
                         "Email",
                         //style: Theme.of(context).textTheme.headlineSmall,
-                      ),
+                      ), */
                       TextFormField(
                         controller: _emailCtrl,
                         keyboardType: TextInputType.emailAddress,
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Password"),
+                      /* Text("Password"), */
                       TextFormField(
                         controller: _pwCtrl,
                         obscureText: true,

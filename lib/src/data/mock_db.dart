@@ -21,6 +21,9 @@ Profil                              | File ProfilePicture, String Username, Stri
 Chat                                | String userId, String lastMessage, String time
 Thread                              | String title, String threadDesc, String gameId, String userId
 */
+import 'dart:async';
+
+import 'package:uuid/uuid.dart';
 import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:ctrl_buddy/src/domain/user.dart';
 import 'package:ctrl_buddy/src/domain/chat.dart';
@@ -30,6 +33,8 @@ import 'package:ctrl_buddy/src/domain/appnotification.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart';
 
 class MockDatabase implements DatabaseRepository {
+  final _uuid = Uuid();
+
   /* Dummy Data Initialization */
   late final List<User> _users;
   late final List<Thread> _threads;
@@ -41,18 +46,21 @@ class MockDatabase implements DatabaseRepository {
   MockDatabase() {
     // Create Users
     final user1 = User(
+      id: _uuid.v4(),
       name: "John Doe",
       bio: "Gamer and developer",
       profilePicture: "assets/noodlecat.jpeg",
       interests: ["RPG", "FPS"],
     );
     final user2 = User(
+      id: _uuid.v4(),
       name: "Max Mustermann",
       bio: "Casual player",
       profilePicture: "assets/noodlecat.jpeg",
       interests: ["MMORPG", "Puzzle"],
     );
     final user3 = User(
+      id: _uuid.v4(),
       name: "Alice Wonder",
       bio: "Pro eSports player",
       profilePicture: "assets/noodlecat.jpeg",
@@ -63,7 +71,11 @@ class MockDatabase implements DatabaseRepository {
 
     // Create Threads
     final thread1 = Thread(
+      id: _uuid.v4(),
       userId: user1.id,
+      username: user1.name,
+      userProfilePicture: user1.profilePicture,
+      gameId: "game_skyrim",
       gameName: "Elder Scrolls V: Skyrim",
       title: "Best mods for immersion?",
       message: "Looking for mods that make Skyrim more immersive!",
@@ -71,7 +83,11 @@ class MockDatabase implements DatabaseRepository {
     );
 
     final thread2 = Thread(
+      id: _uuid.v4(),
       userId: user2.id,
+      username: user2.name,
+      userProfilePicture: user2.profilePicture,
+      gameId: "game_wow",
       gameName: "World of Warcraft",
       title: "Best class for solo play?",
       message: "Returning player here, what class is best for solo leveling?",
@@ -79,7 +95,11 @@ class MockDatabase implements DatabaseRepository {
     );
 
     final thread3 = Thread(
+      id: _uuid.v4(),
       userId: user3.id,
+      username: user3.name,
+      userProfilePicture: user3.profilePicture,
+      gameId: "game_lol",
       gameName: "League of Legends",
       title: "Best champs for mid lane?",
       message: "I'm trying to climb mid lane this season, any tips?",
@@ -95,31 +115,36 @@ class MockDatabase implements DatabaseRepository {
 
     // Create Comments
     final comment1 = Comment(
+      id: _uuid.v4(),
       userId: user2.id,
+      username: user2.name,
+      userProfilePicture: user2.profilePicture,
       threadId: thread1.id,
       comment: "Check out 'Immersive Citizens' and 'Frostfall'!",
       likes: 5,
     );
 
     final comment2 = Comment(
+      id: _uuid.v4(),
       userId: user3.id,
+      username: user3.name,
+      userProfilePicture: user3.profilePicture,
       threadId: thread1.id,
       comment: "Don't forget 'SkyUI', it's a must-have!",
       likes: 3,
     );
 
     final comment3 = Comment(
+      id: _uuid.v4(),
       userId: user1.id,
+      username: user1.name,
+      userProfilePicture: user1.profilePicture,
       threadId: thread2.id,
       comment: "Hunter is great for solo play!",
       likes: 2,
     );
 
     _comments = [comment1, comment2, comment3];
-
-    // Attach Comments to Threads
-    thread1.comments.addAll([comment1, comment2]);
-    thread2.comments.add(comment3);
 
     // Create Messages
     final message1 = Message(
@@ -177,10 +202,10 @@ class MockDatabase implements DatabaseRepository {
   }
 
   /* Simulated delay */
-  Future<void> _simulatedDelay([int ms = 2000]) =>
+  Future<void> _simulatedDelay([int ms = 500]) =>
       Future.delayed(Duration(milliseconds: ms));
 
-  /* User */
+  /* -----------------------User----------------------- */
   /* Read */
   @override
   Future<List<User>> get users async {
@@ -202,7 +227,33 @@ class MockDatabase implements DatabaseRepository {
   Future<User> createUser(User draft) async {
     await _simulatedDelay();
     _users.add(draft);
+
+    _userCntrls[draft.id]?.add(draft);
+
     return draft;
+  }
+
+  /* Watch */
+  final Map<String, StreamController<User?>> _userCntrls = {};
+
+  @override
+  Stream<User?> watchUser(String uid) {
+    if (!_userCntrls.containsKey(uid)) {
+      late final StreamController<User?> controller;
+      controller = StreamController<User?>.broadcast(
+        onListen: () async {
+          await _simulatedDelay();
+          final user = _users
+              .where((p) => p.id == uid)
+              .cast<User?>()
+              .firstWhere((p) => p != null, orElse: () => null);
+          controller.add(user);
+        },
+      );
+      _userCntrls[uid] = controller;
+    }
+
+    return _userCntrls[uid]!.stream;
   }
 
   /* Update */
@@ -220,7 +271,7 @@ class MockDatabase implements DatabaseRepository {
     _users.removeWhere((p) => p.id == id);
   }
 
-  /* Chats */
+  /* -----------------------Chats----------------------- */
   /* Read */
   @override
   Future<List<Chat>> get chats async {
@@ -260,7 +311,7 @@ class MockDatabase implements DatabaseRepository {
     _chats.removeWhere((p) => p.id == id);
   }
 
-  /* Comments */
+  /* -----------------------Comments----------------------- */
   /* Read */
   @override
   Future<List<Comment>> get comments async {
@@ -287,15 +338,7 @@ class MockDatabase implements DatabaseRepository {
   @override
   Future<Comment> createComment(Comment draft) async {
     await _simulatedDelay();
-
     _comments.add(draft);
-
-    final thread = _threads.firstWhere(
-      (p) => p.id == draft.threadId,
-      orElse: () => throw Exception("Thread not found for comment"),
-    );
-    thread.comments.add(draft);
-
     return draft;
   }
 
@@ -303,41 +346,18 @@ class MockDatabase implements DatabaseRepository {
   @override
   Future<void> updateComment(Comment updated) async {
     await _simulatedDelay();
-
     final index = _comments.indexWhere((p) => p.id == updated.id);
     if (index != -1) _comments[index] = updated;
-
-    final thread = _threads
-        .where((p) => p.id == updated.threadId)
-        .cast<Thread?>()
-        .firstWhere((p) => p != null, orElse: () => null);
-    if (thread != null) {
-      final idComment = thread.comments.indexWhere((c) => c.id == updated.id);
-      if (idComment != -1) thread.comments[idComment] = updated;
-    }
   }
 
   /* Delete */
   @override
   Future<void> deleteComment(String id) async {
     await _simulatedDelay();
-
     _comments.removeWhere((p) => p.id == id);
-
-    final comment = _comments
-        .where((p) => p.id == id)
-        .cast<Comment?>()
-        .firstWhere((p) => p != null, orElse: () => null);
-    if (comment == null) return;
-
-    final thread = _threads
-        .where((p) => p.id == comment.threadId)
-        .cast<Thread?>()
-        .firstWhere((p) => p != null, orElse: () => null);
-    thread?.comments.removeWhere((c) => c.id == id);
   }
 
-  /* Messages */
+  /* -----------------------Messages----------------------- */
   /* Read */
   @override
   Future<List<Message>> get messages async {
@@ -377,7 +397,7 @@ class MockDatabase implements DatabaseRepository {
     _messages.removeWhere((p) => p.id == id);
   }
 
-  /* Notifications */
+  /* -----------------------Notifications----------------------- */
   /* Read */
   @override
   Future<List<AppNotification>> get notifications async {
@@ -417,7 +437,7 @@ class MockDatabase implements DatabaseRepository {
     _notifications.removeWhere((p) => p.id == id);
   }
 
-  /* Threads */
+  /* -----------------------Threads----------------------- */
   /* Read */
   @override
   Future<List<Thread>> get threads async {
@@ -425,6 +445,7 @@ class MockDatabase implements DatabaseRepository {
     return List.unmodifiable(_threads);
   }
 
+  @override
   Future<List<Thread>> get popularThreads async {
     await _simulatedDelay();
     final sorted = [..._threads];

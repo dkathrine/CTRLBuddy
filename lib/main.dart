@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/features/login_screen/presentation/complete_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'package:ctrl_buddy/src/app.dart';
 import 'package:ctrl_buddy/src/features/login_screen/presentation/login_screen.dart';
 import 'package:ctrl_buddy/src/data/auth_repository.dart';
 import 'package:ctrl_buddy/src/data/firebase_auth_repo.dart';
+import 'package:ctrl_buddy/src/domain/user.dart' as model;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,10 +52,30 @@ class Root extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          if (snapshot.hasData) {
-            return const MainApp();
+
+          final fbUser = snapshot.data;
+          if (fbUser == null) {
+            return const LoginScreen();
           }
-          return const LoginScreen();
+
+          final db = context.read<MockDatabase>();
+
+          return StreamBuilder<model.User?>(
+            stream: db.watchUser(fbUser.uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (snapshot.data == null) {
+                return CompleteProfileScreen(uid: fbUser.uid);
+              }
+
+              return const MainApp();
+            },
+          );
         },
       ),
     );

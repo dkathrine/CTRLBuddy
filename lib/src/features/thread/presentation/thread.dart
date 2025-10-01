@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/data/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ctrl_buddy/src/common/widgets/comment.dart';
@@ -27,12 +28,50 @@ class _ThreadState extends State<Thread> {
     super.initState();
     //db = Provider.of<MockDatabase>(context, listen: false);
     db = context.read<MockDatabase>();
+    _loadThread();
+  }
+
+  void _loadThread() {
     _threadData = db.getThread(widget.id).then((thread) async {
       if (thread == null) throw Exception("Thread not found");
       final author = await db.getUser(thread.userId);
       final comments = await db.getThreadComments(widget.id);
       return ThreadData(thread: thread, author: author, comments: comments);
     });
+    setState(() {});
+  }
+
+  Future<void> _addComment(String commentText) async {
+    if (commentText.trim().isEmpty) return;
+
+    debugPrint("comment posted");
+    final threadData = await _threadData;
+
+    final auth = context.read<AuthRepository>();
+
+    final curUser = auth.getCurrentUserId();
+
+    if (curUser == null) {
+      debugPrint("No logged-in User found!");
+      return;
+    }
+
+    final user = await db.getUser(curUser);
+    if (user == null) {
+      debugPrint("User not found");
+      return;
+    }
+
+    final comment = model.Comment(
+      id: "",
+      userId: user.id,
+      username: user.name,
+      userProfilePicture: user.profilePicture,
+      threadId: threadData.thread.id,
+      comment: commentText,
+    );
+    await db.createComment(comment);
+    _loadThread();
   }
 
   @override
@@ -172,6 +211,7 @@ class _ThreadState extends State<Thread> {
                               children: comments.map((c) {
                                 return Comment(
                                   userId: c.userId,
+                                  username: c.username,
                                   threadId: c.threadId,
                                   comment: c.comment,
                                   likes: c.likes,
@@ -192,9 +232,7 @@ class _ThreadState extends State<Thread> {
                 child: SafeArea(
                   child: MessageBar(
                     hintText: "Write a comment...",
-                    onSend: () {
-                      debugPrint("Comment posted!");
-                    },
+                    onSend: _addComment,
                   ),
                 ),
               ),

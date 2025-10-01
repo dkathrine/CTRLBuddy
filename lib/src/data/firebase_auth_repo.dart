@@ -30,4 +30,9 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
   }
+
+  @override
+  String? getCurrentUserId() {
+    return FirebaseAuth.instance.currentUser?.uid;
+  }
 }
