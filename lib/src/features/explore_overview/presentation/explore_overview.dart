@@ -1,4 +1,5 @@
 import 'package:ctrl_buddy/src/common/widgets/message_bar.dart';
+import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/search_card.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart' as model;
@@ -19,7 +20,7 @@ class _ExploreOverviewState extends State<ExploreOverview> {
   void initState() {
     super.initState();
     //final db = Provider.of<MockDatabase>(context, listen: false);
-    final db = context.read<MockDatabase>();
+    final db = context.read<DatabaseRepository>();
     _threads = db.threads;
   }
 

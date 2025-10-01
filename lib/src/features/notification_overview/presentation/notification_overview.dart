@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/notifications_item.dart';
 import 'package:ctrl_buddy/src/data/mock_db.dart';
@@ -12,7 +13,7 @@ class NotificationOverview extends StatefulWidget {
 }
 
 class _NotificationOverviewState extends State<NotificationOverview> {
-  late MockDatabase db;
+  late DatabaseRepository db;
 
   late Future<List<AppNotification>> _notifications;
 
@@ -20,7 +21,7 @@ class _NotificationOverviewState extends State<NotificationOverview> {
   void initState() {
     super.initState();
     //db = Provider.of<MockDatabase>(context, listen: false);
-    db = context.read<MockDatabase>();
+    db = context.read<DatabaseRepository>();
     _notifications = db.notifications;
   }
 

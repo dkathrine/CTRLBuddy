@@ -1,8 +1,10 @@
+import 'package:ctrl_buddy/src/data/database_repository.dart';
+import 'package:ctrl_buddy/src/data/firestore_db_repo.dart';
 import 'package:ctrl_buddy/src/features/login_screen/presentation/complete_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'package:ctrl_buddy/src/data/mock_db.dart';
+//import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -19,7 +21,9 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<MockDatabase>(create: (_) => MockDatabase()),
+        Provider<DatabaseRepository>(
+          create: (_) => FirestoreDatabaseRepository(),
+        ),
 
         Provider<AuthRepository>(create: (_) => FirebaseAuthRepository()),
 
@@ -58,7 +62,7 @@ class Root extends StatelessWidget {
             return const LoginScreen();
           }
 
-          final db = context.read<MockDatabase>();
+          final db = context.read<DatabaseRepository>();
 
           return StreamBuilder<model.User?>(
             stream: db.watchUser(fbUser.uid),

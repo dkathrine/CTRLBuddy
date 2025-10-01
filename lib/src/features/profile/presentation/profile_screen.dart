@@ -1,6 +1,7 @@
 import 'package:ctrl_buddy/src/common/widgets/horizontal_card.dart';
 import 'package:ctrl_buddy/src/common/widgets/interest_chip.dart';
-import 'package:ctrl_buddy/src/data/mock_db.dart';
+import 'package:ctrl_buddy/src/data/database_repository.dart';
+//import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
           return const Center(child: Text("Not logged in"));
         }
 
-        final db = context.read<MockDatabase>();
+        final db = context.read<DatabaseRepository>();
 
         return FutureBuilder<User?>(
           future: db.getUser(fbUser.uid),
