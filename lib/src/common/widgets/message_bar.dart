@@ -1,12 +1,24 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:ctrl_buddy/src/theme/app_theme.dart';
 
-class MessageBar extends StatelessWidget {
+class MessageBar extends StatefulWidget {
   final String hintText;
-  final VoidCallback? onSend;
+  final ValueChanged<String>? onSend;
 
   const MessageBar({super.key, required this.hintText, this.onSend});
+
+  @override
+  State<MessageBar> createState() => _MessageBarState();
+}
+
+class _MessageBarState extends State<MessageBar> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +46,24 @@ class MessageBar extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _controller,
                       cursorColor: Color(0xFFF1F1F1),
                       style: const TextStyle(color: Color(0xFFF1F1F1)),
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: hintText,
+                        hintText: widget.hintText,
                         hintStyle: TextStyle(color: Color(0xFFF1F1F1)),
                       ),
                     ),
                   ),
                   IconButton(
                     icon: Icon(Icons.send, color: Color(0xFFF1F1F1)),
-                    onPressed: onSend,
+                    onPressed: () {
+                      final commentText = _controller.text.trim();
+                      if (commentText.isEmpty) return;
+                      widget.onSend?.call(commentText);
+                      _controller.clear();
+                    },
                   ),
                 ],
               ),

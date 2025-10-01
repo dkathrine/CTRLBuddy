@@ -15,6 +15,9 @@ abstract class DatabaseRepository {
   /* Create */
   Future<User> createUser(User draft);
 
+  /* Watch */
+  Stream<User?> watchUser(String uid);
+
   /* Update */
   Future<void> updateUser(User updated);
 
@@ -96,4 +99,7 @@ abstract class DatabaseRepository {
 
   /* Delete */
   Future<void> deleteThread(String id);
+
+  /* Helper to get most liked/popular threads */
+  Future<List<Thread>> get popularThreads;
 }
