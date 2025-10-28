@@ -1,7 +1,7 @@
 import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/notifications_item.dart';
-import 'package:ctrl_buddy/src/data/mock_db.dart';
+//import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:ctrl_buddy/src/domain/appnotification.dart';
 import 'package:provider/provider.dart';
 

@@ -1,10 +1,12 @@
 import 'package:ctrl_buddy/src/data/database_repository.dart';
+import 'package:ctrl_buddy/src/features/thread/presentation/thread_creation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ctrl_buddy/src/data/mock_db.dart';
+//import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:ctrl_buddy/src/common/widgets/interest_chip.dart';
 import 'package:ctrl_buddy/src/common/widgets/content_card.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -96,6 +98,23 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
+        /* Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: FloatingActionButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => ThreadCreationScreen(),
+                  ),
+                ),
+                child: Icon(LucideIcons.plus),
+              ),
+            ),
+          ],
+        ), */
       ],
     );
   }

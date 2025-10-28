@@ -6,6 +6,7 @@ import 'package:ctrl_buddy/src/domain/comment.dart';
 import 'package:ctrl_buddy/src/domain/message.dart';
 import 'package:ctrl_buddy/src/domain/appnotification.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart';
+import 'package:ctrl_buddy/src/domain/game.dart';
 
 class FirestoreDatabaseRepository implements DatabaseRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -123,7 +124,7 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
   Future<List<Comment>> getThreadComments(String threadId) async {
     final snapshot = await _firestore
         .collection('comments')
-        .where(threadId, isEqualTo: threadId)
+        .where('threadId', isEqualTo: threadId)
         .get();
     return snapshot.docs
         .map((doc) => Comment.fromMap(doc.id, doc.data()))
@@ -284,5 +285,61 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
   @override
   Future<void> deleteMessage(String id) async {
     await _firestore.collection('messages').doc(id).delete();
+  }
+
+  /* -----------------------Games------------------------ */
+
+  /// Returns published games (small dataset expected).
+  @override
+  Future<List<Game>> getPublishedGames({int limit = 100}) async {
+    final snapshot = await _firestore
+        .collection('games')
+        .where('status', isEqualTo: 'published')
+        .limit(limit)
+        .get();
+
+    final games = snapshot.docs
+        .map((doc) => Game.fromMap(doc.id, doc.data()))
+        .toList();
+
+    games.sort(
+      (a, b) => a.gameName.toLowerCase().compareTo(b.gameName.toLowerCase()),
+    );
+
+    return games;
+  }
+
+  /// Get a single game by document id
+  @override
+  Future<Game?> getGameById(String id) async {
+    final doc = await _firestore.collection('games').doc(id).get();
+    if (!doc.exists) return null;
+    return Game.fromMap(doc.id, doc.data()!);
+  }
+
+  /// Create a pending game suggestion (used when user suggests a new game)
+  @override
+  Future<Game> createGame(Game draft) async {
+    final docRef = await _firestore.collection('games').add(draft.toMap());
+
+    // Return the game with the generated ID
+    return Game(
+      id: docRef.id,
+      gameName: draft.gameName,
+      slug: draft.slug,
+      coverUrl: draft.coverUrl,
+      threadsCount: draft.threadsCount,
+      status: draft.status,
+      createdAt: draft.createdAt,
+      createdBy: draft.createdBy,
+    );
+  }
+
+  /// Increment the threadsCount for a game when a new thread is created
+  @override
+  Future<void> incrementGameThreadCount(String gameId) async {
+    await _firestore.collection('games').doc(gameId).update({
+      'threadsCount': FieldValue.increment(1),
+    });
   }
 }

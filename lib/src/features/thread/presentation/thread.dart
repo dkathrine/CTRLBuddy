@@ -7,7 +7,7 @@ import 'package:ctrl_buddy/src/common/widgets/message_bar.dart';
 import 'package:ctrl_buddy/src/domain/comment.dart' as model;
 import 'package:ctrl_buddy/src/domain/thread.dart' as model;
 import 'package:ctrl_buddy/src/domain/user.dart';
-import 'package:ctrl_buddy/src/data/mock_db.dart';
+//import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:provider/provider.dart';
 
 class Thread extends StatefulWidget {

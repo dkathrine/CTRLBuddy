@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/search_card.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart' as model;
 import 'package:provider/provider.dart';
-import 'package:ctrl_buddy/src/data/mock_db.dart';
+//import 'package:ctrl_buddy/src/data/mock_db.dart';
 
 class ExploreOverview extends StatefulWidget {
   const ExploreOverview({super.key});
