@@ -7,6 +7,7 @@ import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 /* import 'package:ctrl_buddy/src/common/widgets/message_menu_btn.dart'; */
 import 'package:ctrl_buddy/src/features/profile/presentation/profile_screen.dart';
+import 'package:ctrl_buddy/src/features/thread/presentation/thread_creation_screen.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
@@ -39,6 +40,15 @@ class _MainAppState extends State<MainApp> {
       theme: AppTheme.themeData,
       home: Scaffold(
         //backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => ThreadCreationScreen(),
+            ),
+          ),
+          child: Icon(LucideIcons.plus),
+        ),
         bottomNavigationBar: CustomBottomNav(
           navItems: _navItems,
           currentIndex: _currentIndex,

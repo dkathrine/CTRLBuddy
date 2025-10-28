@@ -4,6 +4,7 @@ import 'package:ctrl_buddy/src/domain/comment.dart';
 import 'package:ctrl_buddy/src/domain/message.dart';
 import 'package:ctrl_buddy/src/domain/appnotification.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart';
+import 'package:ctrl_buddy/src/domain/game.dart';
 
 abstract class DatabaseRepository {
   /* User */
@@ -102,4 +103,17 @@ abstract class DatabaseRepository {
 
   /* Helper to get most liked/popular threads */
   Future<List<Thread>> get popularThreads;
+
+  /* Games */
+  /// Returns published games (small dataset expected).
+  Future<List<Game>> getPublishedGames({int limit = 100});
+
+  /// Get a single game by document id
+  Future<Game?> getGameById(String id);
+
+  /// Create a pending game suggestion (used when user suggests a new game)
+  Future<Game> createGame(Game draft);
+
+  /// Increment the threadsCount for a game when a new thread is created
+  Future<void> incrementGameThreadCount(String gameId);
 }
