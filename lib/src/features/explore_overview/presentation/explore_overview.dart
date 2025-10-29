@@ -15,6 +15,7 @@ class ExploreOverview extends StatefulWidget {
 
 class _ExploreOverviewState extends State<ExploreOverview> {
   late Future<List<model.Thread>> _threads;
+  String _query = '';
 
   @override
   void initState() {
@@ -29,7 +30,21 @@ class _ExploreOverviewState extends State<ExploreOverview> {
     return Column(
       children: [
         SizedBox(height: 8),
-        MessageBar(hintText: "Search"),
+        MessageBar(
+          hintText: "Search",
+          onChanged: (text) {
+            setState(() {
+              _query = text;
+            });
+          },
+          onSend: (text) {
+            setState(() {
+              _query = text;
+
+              FocusScope.of(context).unfocus();
+            });
+          },
+        ),
         SizedBox(height: 16),
         Expanded(
           child: FutureBuilder(
@@ -76,11 +91,24 @@ class _ExploreOverviewState extends State<ExploreOverview> {
                 return b.totalLikes.compareTo(a.totalLikes);
               });
 
+              final trimmed = _query.trim().toLowerCase();
+              final filtered = trimmed.isEmpty
+                  ? games
+                  : games
+                        .where(
+                          (g) => g.gameName.toLowerCase().contains(trimmed),
+                        )
+                        .toList();
+
+              if (filtered.isEmpty) {
+                return Center(child: Text('No results for "${_query.trim()}"'));
+              }
+
               return SingleChildScrollView(
                 child: Wrap(
                   spacing: 16,
                   runSpacing: 16,
-                  children: games.map((game) {
+                  children: filtered.map((game) {
                     return SearchCard(gameName: game.gameName);
                   }).toList(),
                 ),

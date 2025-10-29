@@ -4,8 +4,14 @@ import 'package:flutter/material.dart';
 class MessageBar extends StatefulWidget {
   final String hintText;
   final ValueChanged<String>? onSend;
+  final ValueChanged<String>? onChanged;
 
-  const MessageBar({super.key, required this.hintText, this.onSend});
+  const MessageBar({
+    super.key,
+    required this.hintText,
+    this.onSend,
+    this.onChanged,
+  });
 
   @override
   State<MessageBar> createState() => _MessageBarState();
@@ -54,6 +60,7 @@ class _MessageBarState extends State<MessageBar> {
                         hintText: widget.hintText,
                         hintStyle: TextStyle(color: Color(0xFFF1F1F1)),
                       ),
+                      onChanged: widget.onChanged,
                     ),
                   ),
                   IconButton(
