@@ -92,6 +92,8 @@ abstract class DatabaseRepository {
 
   Future<Thread?> getThread(String id);
 
+  Future<List<Thread>> getCategoryThread(String gameName);
+
   /* Create */
   Future<Thread> createThread(Thread draft);
 

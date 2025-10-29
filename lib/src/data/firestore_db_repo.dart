@@ -88,6 +88,20 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
     return Thread.fromMap(doc.id, doc.data()!);
   }
 
+  @override
+  Future<List<Thread>> getCategoryThread(String gameName) async {
+    final snapshot = await _firestore
+        .collection('threads')
+        .where('gameName', isEqualTo: gameName)
+        .get();
+
+    final threads = snapshot.docs
+        .map((doc) => Thread.fromMap(doc.id, doc.data()))
+        .toList();
+
+    return threads.toList();
+  }
+
   /* Create */
   @override
   Future<Thread> createThread(Thread draft) async {

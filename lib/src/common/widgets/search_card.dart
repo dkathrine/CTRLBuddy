@@ -1,3 +1,4 @@
+import 'package:ctrl_buddy/src/features/category_screen/presentation/category_screen.dart';
 import 'package:flutter/material.dart';
 
 class SearchCard extends StatelessWidget {
@@ -8,6 +9,12 @@ class SearchCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => CategoryScreen(gameName: gameName),
+        ),
+      ),
       child: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
         width: MediaQuery.of(context).size.width * 0.4,
