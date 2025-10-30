@@ -43,12 +43,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   child: Icon(LucideIcons.arrowLeft, size: 42),
                 ),
                 SizedBox(width: 8),
-                Text(
-                  '${widget.gameName}',
-                  style: TextStyle(
-                    fontSize: 38,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.96,
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 100,
+                  child: Text(
+                    '${widget.gameName}',
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 38,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.96,
+                    ),
                   ),
                 ),
               ],
@@ -65,9 +70,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     return Center(child: Text('Error: ${asyncSnapshot.error}'));
                   } else if (!asyncSnapshot.hasData ||
                       asyncSnapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text('No popular threads found.'),
-                    );
+                    return const Center(child: Text('No threads found.'));
                   }
 
                   final threads = asyncSnapshot.data!;
