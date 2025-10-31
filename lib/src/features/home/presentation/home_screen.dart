@@ -98,23 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
-        /* Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: FloatingActionButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => ThreadCreationScreen(),
-                  ),
-                ),
-                child: Icon(LucideIcons.plus),
-              ),
-            ),
-          ],
-        ), */
       ],
     );
   }
