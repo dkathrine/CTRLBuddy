@@ -88,6 +88,19 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
     return Thread.fromMap(doc.id, doc.data()!);
   }
 
+  Future<List<Thread>> getThreadsByIds(List<String> threadIds) async {
+    if (threadIds.isEmpty) return [];
+
+    try {
+      final threadFutures = threadIds.map((threadId) => getThread(threadId));
+      final threads = await Future.wait(threadFutures);
+      return threads.whereType<Thread>().toList();
+    } catch (e) {
+      //debugPrint('Error fetching threads by IDs: $e');
+      return [];
+    }
+  }
+
   @override
   Future<List<Thread>> getCategoryThread(String gameName) async {
     final snapshot = await _firestore
@@ -103,11 +116,13 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
   }
 
   /* Create */
-  @override
   Future<Thread> createThread(Thread draft) async {
-    await _firestore
-        .collection('threads') /* .doc(draft.id) */
-        .add(draft.toMap());
+    final docRef = await _firestore.collection('threads').add(draft.toMap());
+
+    await _firestore.collection('users').doc(draft.userId).update({
+      'threads': FieldValue.arrayUnion([docRef.id]),
+    });
+
     return draft;
   }
 

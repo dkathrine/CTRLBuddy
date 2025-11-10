@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 //import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ctrl_buddy/src/data/interests_provider.dart';
 
 import 'firebase_options.dart';
 import 'package:ctrl_buddy/src/app.dart';
@@ -26,6 +27,11 @@ Future<void> main() async {
         ),
 
         Provider<AuthRepository>(create: (_) => FirebaseAuthRepository()),
+
+        ChangeNotifierProvider<InterestsProvider>(
+          create: (context) =>
+              InterestsProvider(context.read<DatabaseRepository>()),
+        ),
 
         StreamProvider<User?>(
           create: (context) =>

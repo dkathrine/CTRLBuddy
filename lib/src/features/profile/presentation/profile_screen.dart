@@ -1,6 +1,7 @@
 import 'package:ctrl_buddy/src/common/widgets/horizontal_card.dart';
 import 'package:ctrl_buddy/src/common/widgets/interest_chip.dart';
 import 'package:ctrl_buddy/src/data/database_repository.dart';
+import 'package:ctrl_buddy/src/data/interests_provider.dart';
 //import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -11,19 +12,8 @@ import 'package:ctrl_buddy/src/domain/user.dart';
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
-  final interests = [
-    'League of Legends',
-    'Warframe',
-    'World of Warcraft',
-    'Elden Ring',
-    'Baldurs Gate 3',
-    'Black Desert',
-    'Zennless Zone Zero',
-    'Monster Hunter Wilds',
-    'Overwatch',
-  ];
-
   Future<void> _signOut(BuildContext context) async {
+    context.read<InterestsProvider>().clearInterests();
     await context.read<AuthRepository>().signOut();
   }
 
@@ -50,6 +40,14 @@ class ProfileScreen extends StatelessWidget {
             if (user == null) {
               return const Center(child: Text("No profile found"));
             }
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final interestsProvider = context.read<InterestsProvider>();
+              if (interestsProvider.interests.isEmpty &&
+                  user.interests.isNotEmpty) {
+                interestsProvider.loadInterests(user.interests);
+              }
+            });
 
             return SingleChildScrollView(
               child: Column(
@@ -146,95 +144,80 @@ class ProfileScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: 4),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Column(
-                                children: [
-                                  Wrap(
-                                    spacing: 16,
-                                    runSpacing: 16,
+                            FutureBuilder(
+                              future: db.getThreadsByIds(user.threads),
+                              builder: (context, asyncSnapshot) {
+                                if (asyncSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+
+                                final userThreads = asyncSnapshot.data ?? [];
+
+                                if (userThreads.isEmpty) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      "No threads posted yet",
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                  );
+                                }
+
+                                return SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Column(
                                     children: [
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
+                                      Wrap(
+                                        spacing: 16,
+                                        runSpacing: 16,
+                                        children: [
+                                          for (
+                                            int i = 0;
+                                            i < userThreads.length;
+                                            i++
+                                          )
+                                            if (i.isEven)
+                                              HorizontalCard(
+                                                image: "assets/noodlecat.jpeg",
+                                                title: userThreads[i].title,
+                                                desc: userThreads[i].message,
+                                                authorId: userThreads[i].userId,
+                                                threadId: userThreads[i].id,
+                                              ),
+                                        ],
                                       ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
+                                      SizedBox(height: 16),
+                                      Wrap(
+                                        spacing: 16,
+                                        runSpacing: 16,
+                                        children: [
+                                          for (
+                                            int i = 0;
+                                            i < userThreads.length;
+                                            i++
+                                          )
+                                            if (i.isOdd)
+                                              HorizontalCard(
+                                                image: "assets/noodlecat.jpeg",
+                                                title: userThreads[i].title,
+                                                desc: userThreads[i].message,
+                                                authorId: userThreads[i].userId,
+                                                threadId: userThreads[i].id,
+                                              ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 16),
-                                  Wrap(
-                                    spacing: 16,
-                                    runSpacing: 16,
-                                    children: [
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                      HorizontalCard(
-                                        image: "assets/noodlecat.jpeg",
-                                        title: "title",
-                                        desc: "desc",
-                                        authorId: "authorId",
-                                        threadId: "threadId",
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -257,32 +240,84 @@ class ProfileScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: 4),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Wrap(
-                                    spacing: 16,
-                                    runSpacing: 16,
+                            Consumer<InterestsProvider>(
+                              builder: (context, interestsProvider, child) {
+                                if (interestsProvider.isLoading) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+
+                                if (interestsProvider.error != null) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      interestsProvider.error!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(color: Colors.red),
+                                    ),
+                                  );
+                                }
+
+                                if (!interestsProvider.hasInterests) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      "No interests added yet",
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                  );
+                                }
+
+                                final interests = interestsProvider.interests;
+                                return SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      for (int i = 0; i < interests.length; i++)
-                                        if (i.isEven)
-                                          InterestChip(interest: interests[i]),
+                                      Wrap(
+                                        spacing: 16,
+                                        runSpacing: 16,
+                                        children: [
+                                          for (
+                                            int i = 0;
+                                            i < interests.length;
+                                            i++
+                                          )
+                                            if (i.isEven)
+                                              InterestChip(
+                                                interest: interests[i],
+                                              ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 16),
+                                      Wrap(
+                                        spacing: 16,
+                                        runSpacing: 16,
+                                        children: [
+                                          for (
+                                            int i = 0;
+                                            i < interests.length;
+                                            i++
+                                          )
+                                            if (i.isOdd)
+                                              InterestChip(
+                                                interest: interests[i],
+                                              ),
+                                        ],
+                                      ),
                                     ],
                                   ),
-                                  SizedBox(height: 16),
-                                  Wrap(
-                                    spacing: 16,
-                                    runSpacing: 16,
-                                    children: [
-                                      for (int i = 0; i < interests.length; i++)
-                                        if (i.isOdd)
-                                          InterestChip(interest: interests[i]),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ],
                         ),
