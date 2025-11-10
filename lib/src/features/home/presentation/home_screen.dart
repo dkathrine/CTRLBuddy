@@ -1,4 +1,7 @@
+import 'package:ctrl_buddy/src/data/auth_repository.dart';
 import 'package:ctrl_buddy/src/data/database_repository.dart';
+import 'package:ctrl_buddy/src/domain/user.dart';
+import 'package:ctrl_buddy/src/data/interests_provider.dart';
 import 'package:ctrl_buddy/src/features/thread/presentation/thread_creation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,33 +33,190 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthRepository>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  spacing: 8,
-                  children: [
-                    InterestChip(interest: 'League of Legends'),
-                    InterestChip(interest: 'Warframe'),
-                    InterestChip(interest: 'World of Warcraft'),
-                    InterestChip(interest: 'Elden Ring'),
-                    InterestChip(interest: 'Baldurs Gate 3'),
-                    InterestChip(interest: 'Black Desert'),
-                    InterestChip(interest: 'Zennless Zone Zero'),
-                    InterestChip(interest: 'Monster Hunter Wilds'),
-                    InterestChip(interest: 'Overwatch'),
-                  ],
-                ),
-              ),
-            ),
-            /* msg_button */
-            SizedBox(width: /* 5 */ 0),
-          ],
+        StreamBuilder(
+          stream: auth.authStateChanges(),
+          builder: (context, authSnapshot) {
+            final fbUser = authSnapshot.data;
+
+            if (fbUser == null) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Please log in to see your interests',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 0),
+                ],
+              );
+            }
+
+            return FutureBuilder<User?>(
+              future: db.getUser(fbUser.uid),
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            spacing: 8,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 0),
+                    ],
+                  );
+                }
+
+                final user = userSnapshot.data;
+
+                if (user == null) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            spacing: 8,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'No interests found',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 0),
+                    ],
+                  );
+                }
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final interestsProvider = context.read<InterestsProvider>();
+                  if (interestsProvider.interests.isEmpty &&
+                      user.interests.isNotEmpty) {
+                    interestsProvider.loadInterests(user.interests);
+                  }
+                });
+
+                return Consumer<InterestsProvider>(
+                  builder: (context, interestsProvider, child) {
+                    if (interestsProvider.isLoading) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                spacing: 8,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 0),
+                        ],
+                      );
+                    }
+
+                    final interests = interestsProvider.interests;
+
+                    if (interests.isEmpty) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                spacing: 8,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'No interests added yet',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 0),
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              spacing: 8,
+                              children: interests
+                                  .map(
+                                    (interest) =>
+                                        InterestChip(interest: interest),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 0),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
         ),
         Text('Popular', style: Theme.of(context).textTheme.headlineLarge),
         Expanded(
