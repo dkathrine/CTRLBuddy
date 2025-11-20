@@ -125,33 +125,53 @@ class _ThreadCreationScreenState extends State<ThreadCreationScreen> {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            GamePicker(
-              databaseRepository: db,
-              currentUserId: currentUserId,
-              onGameSelected: (game) {
-                setState(() {
-                  _selectedGame = game;
-                });
-              },
-            ),
-            TextField(
-              controller: _titleCtrl,
-              decoration: const InputDecoration(labelText: "Title"),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _descCtrl,
-              decoration: const InputDecoration(
-                labelText: "What do you want to talk about?",
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              GamePicker(
+                databaseRepository: db,
+                currentUserId: currentUserId,
+                onGameSelected: (game) {
+                  setState(() {
+                    _selectedGame = game;
+                  });
+                },
               ),
-              maxLines: 10,
-            ),
-          ],
+              const SizedBox(height: 12),
+              TextField(
+                controller: _titleCtrl,
+                cursorColor: Theme.of(context).textColor.withAlpha(70),
+                decoration: InputDecoration(
+                  labelText: "Title",
+                  floatingLabelStyle: TextStyle(
+                    color: Theme.of(context).textColor,
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).textColor),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _descCtrl,
+                cursorColor: Theme.of(context).textColor.withAlpha(70),
+                decoration: InputDecoration(
+                  labelText: "What do you want to talk about?",
+                  floatingLabelStyle: TextStyle(
+                    color: Theme.of(context).textColor,
+                  ),
+                  border: InputBorder.none,
+                ),
+                minLines: 1,
+                maxLines: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -241,13 +241,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   runSpacing: 22,
                   children: threads.map((thread) {
                     return FutureBuilder(
-                      future: db.getUser(thread.userId),
-                      builder: (context, snapshot) {
+                      future: Future.wait([
+                        db.getUser(thread.userId),
+                        db.getGameById(thread.gameId),
+                      ]),
+                      builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                        final user = snapshot.data?[0];
+                        final game = snapshot.data?[1];
+
                         return ContentCard(
                           threadId: thread.id,
-                          image: 'assets/noodlecat.jpeg',
+                          coverImage:
+                              game?.coverUrl ??
+                              'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png',
+                          image:
+                              user?.profilePicture ??
+                              'assets/default_profile.png',
                           title: thread.title,
-                          author: snapshot.data?.name ?? "Unknown",
+                          author: user?.name ?? "Deleted User",
                           desc: thread.message,
                         );
                       },

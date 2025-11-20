@@ -6,6 +6,8 @@ class ContentCard extends StatelessWidget {
   const ContentCard({
     super.key,
     required this.threadId,
+    this.coverImage =
+        'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png',
     required this.image,
     required this.title,
     required this.author,
@@ -13,6 +15,7 @@ class ContentCard extends StatelessWidget {
   });
 
   final String threadId;
+  final dynamic coverImage;
   final dynamic image;
   final String title;
   final String author;
@@ -77,7 +80,7 @@ class ContentCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                 child: Image(
-                  image: AssetImage(image),
+                  image: NetworkImage(coverImage),
                   width: double.infinity,
                   height: 188,
                   fit: BoxFit.cover,
@@ -96,6 +99,7 @@ class ContentCard extends StatelessWidget {
                     ),
                     child: Column(
                       spacing: 20,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           spacing: 16,

@@ -7,4 +7,6 @@ abstract class AuthRepository {
   Stream<User?> authStateChanges();
 
   String? getCurrentUserId();
+
+  Future<void> deleteCurrentUser();
 }

@@ -82,16 +82,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       runSpacing: 22,
                       children: threads.map((thread) {
                         return FutureBuilder(
-                          future: db.getUser(thread.userId),
-                          builder: (context, snapshot) {
-                            return ContentCard(
-                              threadId: thread.id,
-                              image: 'assets/noodlecat.jpeg',
-                              title: thread.title,
-                              author: snapshot.data?.name ?? "Unknown",
-                              desc: thread.message,
-                            );
-                          },
+                          future: Future.wait([
+                            db.getUser(thread.userId),
+                            db.getGameById(thread.gameId),
+                          ]),
+                          builder:
+                              (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                                final user = snapshot.data?[0];
+                                final game = snapshot.data?[1];
+
+                                return ContentCard(
+                                  threadId: thread.id,
+                                  coverImage:
+                                      game?.coverUrl ??
+                                      'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png',
+                                  image:
+                                      user?.profilePicture ??
+                                      'assets/default_profile.jpeg',
+                                  title: thread.title,
+                                  author: user?.name ?? "Deleted User",
+                                  desc: thread.message,
+                                );
+                              },
                         );
                       }).toList(),
                     ),

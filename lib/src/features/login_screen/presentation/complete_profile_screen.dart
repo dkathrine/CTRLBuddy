@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ctrl_buddy/src/data/database_repository.dart';
+import 'package:ctrl_buddy/src/data/interests_provider.dart';
 import 'package:ctrl_buddy/src/domain/user.dart';
 import 'package:ctrl_buddy/src/domain/game.dart';
 import 'package:ctrl_buddy/src/common/widgets/game_picker.dart';
@@ -110,6 +111,13 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         await db.updateUser(newUser);
       }
 
+      if (mounted) {
+        final interestsProvider = context.read<InterestsProvider>();
+        await interestsProvider.refreshInterests(
+          List<String>.from(_interestIds),
+        );
+      }
+
       // After await, widget might have been unmounted. Check before using context.
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -126,6 +134,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     } finally {
       if (!mounted) return;
       setState(() => _loading = false);
+      if (_existingUser != null) {
+        Navigator.of(context).pop(true);
+      }
     }
   }
 
@@ -168,92 +179,117 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _usernameCtrl,
-              decoration: const InputDecoration(labelText: "Username"),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _bioCtrl,
-              decoration: const InputDecoration(labelText: "Bio (optional)"),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Add favorite games",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Use GamePicker exactly as implemented by you (no changes)
-            GamePicker(
-              databaseRepository: db,
-              currentUserId: widget.uid,
-              onGameSelected: _onGameSelected,
-              initialGame: null,
-              label: 'Search games to add',
-            ),
-
-            const SizedBox(height: 12),
-
-            // Display selected interests as horizontal chips
-            SizedBox(
-              height: 72,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: _interestIds.map((gid) {
-                    final g = _interestGames[gid];
-                    final label = g?.gameName ?? gid;
-                    final avatar =
-                        (g?.coverUrl != null && g!.coverUrl!.isNotEmpty)
-                        ? CircleAvatar(
-                            backgroundImage: NetworkImage(g.coverUrl!),
-                            radius: 16,
-                          )
-                        : const CircleAvatar(
-                            child: Icon(Icons.videogame_asset),
-                            radius: 16,
-                          );
-
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Chip(
-                        avatar: avatar,
-                        label: Text(label, overflow: TextOverflow.ellipsis),
-                        onDeleted: () => _removeInterest(gid),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _existingUser == null
+                  ? TextField(
+                      controller: _usernameCtrl,
+                      cursorColor: Theme.of(context).textColor.withAlpha(70),
+                      decoration: InputDecoration(
+                        labelText: "Username",
+                        labelStyle: TextStyle(
+                          color: Theme.of(context).textColor,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).textColor,
+                          ),
+                        ),
                       ),
-                    );
-                  }).toList(),
+                    )
+                  : SizedBox.shrink(),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _bioCtrl,
+                cursorColor: Theme.of(context).textColor.withAlpha(70),
+                decoration: InputDecoration(
+                  labelText: "Bio (optional)",
+                  labelStyle: TextStyle(color: Theme.of(context).textColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).textColor),
+                  ),
+                ),
+                minLines: 1,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Add favorite games",
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-            ),
+              const SizedBox(height: 8),
 
-            const SizedBox(height: 24),
+              // Use GamePicker exactly as implemented by you (no changes)
+              GamePicker(
+                databaseRepository: db,
+                currentUserId: widget.uid,
+                onGameSelected: _onGameSelected,
+                initialGame: null,
+                label: 'Search games to add',
+              ),
 
-            ElevatedButton(
-              onPressed: _loading ? null : _onSave,
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(
-                  Theme.of(context).primaryColor,
+              const SizedBox(height: 12),
+
+              // Display selected interests as horizontal chips
+              SizedBox(
+                height: 72,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _interestIds.map((gid) {
+                      final g = _interestGames[gid];
+                      final label = g?.gameName ?? gid;
+                      final avatar =
+                          (g?.coverUrl != null && g!.coverUrl!.isNotEmpty)
+                          ? CircleAvatar(
+                              backgroundImage: NetworkImage(g.coverUrl!),
+                              radius: 16,
+                            )
+                          : const CircleAvatar(
+                              child: Icon(Icons.videogame_asset),
+                              radius: 16,
+                            );
+
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Chip(
+                          avatar: avatar,
+                          label: Text(label, overflow: TextOverflow.ellipsis),
+                          onDeleted: () => _removeInterest(gid),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
-              child: _loading
-                  ? const CircularProgressIndicator()
-                  : Text(
-                      "Complete",
-                      style: TextStyle(color: Theme.of(context).textColor),
-                    ),
-            ),
-          ],
+
+              const SizedBox(height: 24),
+
+              ElevatedButton(
+                onPressed: _loading ? null : _onSave,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).primaryColor,
+                  ),
+                ),
+                child: _loading
+                    ? const CircularProgressIndicator()
+                    : Text(
+                        _existingUser == null ? "Complete" : "Update",
+                        style: TextStyle(color: Theme.of(context).textColor),
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -35,4 +35,12 @@ class FirebaseAuthRepository implements AuthRepository {
   String? getCurrentUserId() {
     return FirebaseAuth.instance.currentUser?.uid;
   }
+
+  @override
+  Future<void> deleteCurrentUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.delete();
+    }
+  }
 }

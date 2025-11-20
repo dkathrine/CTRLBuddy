@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ctrl_buddy/src/data/auth_repository.dart';
 import 'package:ctrl_buddy/src/domain/user.dart';
+import 'package:ctrl_buddy/src/features/login_screen/presentation/complete_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -15,6 +16,53 @@ class ProfileScreen extends StatelessWidget {
   Future<void> _signOut(BuildContext context) async {
     context.read<InterestsProvider>().clearInterests();
     await context.read<AuthRepository>().signOut();
+  }
+
+  Future<void> _deleteProfile(BuildContext context, String userId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Profile'),
+          content: const Text(
+            'Are you sure you want to delete your profile? This action cannot be undone.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).textColor,
+              ),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      try {
+        final db = context.read<DatabaseRepository>();
+        await context.read<AuthRepository>().deleteCurrentUser();
+        await context.read<AuthRepository>().signOut();
+        context.read<InterestsProvider>().clearInterests();
+        await db.deleteUser(userId);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error deleting profile: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -60,13 +108,33 @@ class ProfileScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       SizedBox.shrink(),
-                      IconButton(
-                        onPressed: () => _signOut(context),
-                        icon: Icon(Icons.logout),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () =>
+                                _deleteProfile(context, fbUser.uid),
+                            icon: Icon(Icons.delete),
+                            color: Colors.red,
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    CompleteProfileScreen(uid: fbUser.uid),
+                              ),
+                            ),
+                            icon: Icon(Icons.edit),
+                          ),
+                          IconButton(
+                            onPressed: () => _signOut(context),
+                            icon: Icon(Icons.logout),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  SizedBox(height: 2),
+                  SizedBox(height: 14),
                   SingleChildScrollView(
                     child: Column(
                       spacing: 16,
@@ -105,9 +173,10 @@ class ProfileScreen extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(1),
                                 child: Container(
+                                  width: MediaQuery.sizeOf(context).width,
                                   padding: EdgeInsets.symmetric(
                                     vertical: 14,
-                                    horizontal: 6,
+                                    horizontal: 12,
                                   ),
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).primaryColor,

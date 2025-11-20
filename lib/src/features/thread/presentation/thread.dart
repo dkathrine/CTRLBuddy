@@ -88,7 +88,10 @@ class _ThreadState extends State<Thread> {
 
         final data = asyncSnapshot.data!;
         final thread = data.thread;
-        final author = data.author!;
+        final author = data.author;
+        final authorName = author?.name ?? "Deleted User";
+        final authorProfilePicture =
+            author?.profilePicture ?? "assets/default_profile.png";
         final comments = data.comments;
 
         return Scaffold(
@@ -119,12 +122,12 @@ class _ThreadState extends State<Thread> {
                                   children: [
                                     CircleAvatar(
                                       backgroundImage: AssetImage(
-                                        author.profilePicture,
+                                        authorProfilePicture,
                                       ),
                                       radius: 16,
                                     ),
                                     Text(
-                                      author.name,
+                                      authorName,
                                       style: Theme.of(
                                         context,
                                       ).textTheme.titleMedium,
