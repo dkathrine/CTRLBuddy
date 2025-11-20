@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/domain/game.dart';
 import 'package:ctrl_buddy/src/data/database_repository.dart';
+import 'package:ctrl_buddy/src/theme/app_theme.dart';
 
 class GamePicker extends StatefulWidget {
   // Callback when a game is selected
@@ -99,11 +100,22 @@ class _GamePickerState extends State<GamePicker> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Theme.of(context).textColor),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Suggest Game'),
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(
+                Theme.of(context).primaryColor,
+              ),
+            ),
+            child: Text(
+              'Suggest Game',
+              style: TextStyle(color: Theme.of(context).textColor),
+            ),
           ),
         ],
       ),
@@ -181,13 +193,18 @@ class _GamePickerState extends State<GamePicker> {
             return TextField(
               controller: fieldController,
               focusNode: focusNode,
+              cursorColor: Theme.of(context).textColor.withAlpha(70),
               decoration: InputDecoration(
                 labelText: widget.label,
+                labelStyle: TextStyle(color: Theme.of(context).textColor),
                 hintText: 'Start typing to search...',
                 suffixIcon: _selectedGame != null
                     ? Icon(Icons.check_circle, color: Colors.green)
                     : null,
                 border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).textColor),
+                ),
               ),
               onChanged: (value) {
                 _controller.text = value;

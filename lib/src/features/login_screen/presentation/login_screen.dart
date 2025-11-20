@@ -109,9 +109,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _emailCtrl,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
+                        cursorColor: Theme.of(context).textColor.withAlpha(70),
+                        decoration: InputDecoration(
                           labelText: "E-Mail",
+                          labelStyle: TextStyle(
+                            color: Theme.of(context).textColor,
+                          ),
                           border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).textColor,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -122,10 +131,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       /* Text("Password"), */
                       TextFormField(
                         controller: _pwCtrl,
+                        cursorColor: Theme.of(context).textColor.withAlpha(70),
                         obscureText: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: "Password",
+                          labelStyle: TextStyle(
+                            color: Theme.of(context).textColor,
+                          ),
                           border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).textColor,
+                            ),
+                          ),
                         ),
                       ),
                     ],

@@ -15,7 +15,8 @@ class Game {
     required this.id,
     required this.gameName,
     this.slug = '',
-    this.coverUrl,
+    this.coverUrl =
+        'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png',
     this.threadsCount = 0,
     this.status = 'pending',
     DateTime? createdAt,
@@ -25,7 +26,9 @@ class Game {
   Map<String, dynamic> toMap() => {
     'gameName': gameName,
     'slug': slug,
-    'coverUrl': coverUrl ?? '',
+    'coverUrl':
+        coverUrl ??
+        'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png',
     'threadsCount': threadsCount,
     'status': status,
     'createdAt': createdAt.toIso8601String(),
@@ -43,7 +46,9 @@ class Game {
             ' ',
             '_',
           ),
-      coverUrl: map['coverUrl'] as String? ?? '',
+      coverUrl:
+          map['coverUrl'] as String? ??
+          'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png',
       threadsCount: (map['threadsCount'] is int)
           ? map['threadsCount'] as int
           : (map['threadsCount'] == null

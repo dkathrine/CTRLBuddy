@@ -22,14 +22,14 @@ class _MainAppState extends State<MainApp> {
   final List<Widget> _pages = [
     HomeScreen(),
     ExploreOverview(),
-    NotificationOverview(),
+    //NotificationOverview(),
     ProfileScreen(),
   ];
 
   final List<NavItem> _navItems = [
     NavItem(icon: LucideIcons.home, title: 'Home'),
     NavItem(icon: LucideIcons.search, title: 'Explore'),
-    NavItem(icon: LucideIcons.bell, title: 'Notifications'),
+    //NavItem(icon: LucideIcons.bell, title: 'Notifications'),
     NavItem(icon: LucideIcons.user, title: 'Profile'),
   ];
 

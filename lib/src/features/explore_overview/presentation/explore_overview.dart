@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/common/widgets/search_card.dart';
 import 'package:ctrl_buddy/src/domain/thread.dart' as model;
 import 'package:provider/provider.dart';
-//import 'package:ctrl_buddy/src/data/mock_db.dart';
 
 class ExploreOverview extends StatefulWidget {
   const ExploreOverview({super.key});
@@ -20,7 +19,6 @@ class _ExploreOverviewState extends State<ExploreOverview> {
   @override
   void initState() {
     super.initState();
-    //final db = Provider.of<MockDatabase>(context, listen: false);
     final db = context.read<DatabaseRepository>();
     _threads = db.threads;
   }
@@ -61,29 +59,23 @@ class _ExploreOverviewState extends State<ExploreOverview> {
 
               final threads = asyncSnapshot.data!;
 
-              /* Grouping threads by game */
-              final Map<String, List<model.Thread>> grouped = {};
+              final Map<String, GameStats> grouped = {};
               for (var thread in threads) {
-                grouped.putIfAbsent(thread.gameName, () => []).add(thread);
+                if (grouped.containsKey(thread.gameName)) {
+                  grouped[thread.gameName]!.threadCount++;
+                  grouped[thread.gameName]!.totalLikes += thread.likes;
+                } else {
+                  grouped[thread.gameName] = GameStats(
+                    gameName: thread.gameName,
+                    gameId: thread.gameId,
+                    threadCount: 1,
+                    totalLikes: thread.likes,
+                  );
+                }
               }
 
-              /* creating list of games with stats for further sorting */
-              final List<GameStats> games = grouped.entries.map((entry) {
-                final gameName = entry.key;
-                final gameThreads = entry.value;
-                final totalLikes = gameThreads.fold<int>(
-                  0,
-                  (sum, t) => sum + t.likes,
-                );
+              final games = grouped.values.toList();
 
-                return GameStats(
-                  gameName: gameName,
-                  threadCount: gameThreads.length,
-                  totalLikes: totalLikes,
-                );
-              }).toList();
-
-              /* sort by threadCount and then by totalLikes to determine the most active category of games */
               games.sort((a, b) {
                 if (b.threadCount != a.threadCount) {
                   return b.threadCount.compareTo(a.threadCount);
@@ -109,7 +101,10 @@ class _ExploreOverviewState extends State<ExploreOverview> {
                   spacing: 16,
                   runSpacing: 16,
                   children: filtered.map((game) {
-                    return SearchCard(gameName: game.gameName);
+                    return SearchCard(
+                      gameName: game.gameName,
+                      gameId: game.gameId,
+                    );
                   }).toList(),
                 ),
               );
@@ -123,11 +118,13 @@ class _ExploreOverviewState extends State<ExploreOverview> {
 
 class GameStats {
   final String gameName;
-  final int threadCount;
-  final int totalLikes;
+  final String gameId; // Added gameId field
+  int threadCount; // Made mutable to update counts
+  int totalLikes; // Made mutable to update counts
 
   GameStats({
     required this.gameName,
+    required this.gameId,
     required this.threadCount,
     required this.totalLikes,
   });
