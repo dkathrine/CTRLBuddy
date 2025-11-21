@@ -36,8 +36,11 @@ class _ThreadState extends State<Thread> {
     _threadData = db.getThread(widget.id).then((thread) async {
       if (thread == null) throw Exception("Thread not found");
       final author = await db.getUser(thread.userId);
-      final comments = await db.getThreadComments(widget.id);
-      return ThreadData(thread: thread, author: author, comments: comments);
+      //final comments = await db.getThreadComments(widget.id);
+      return ThreadData(
+        thread: thread,
+        author: author /* comments: comments */,
+      );
     });
     setState(() {});
   }
@@ -72,7 +75,7 @@ class _ThreadState extends State<Thread> {
       comment: commentText,
     );
     await db.createComment(comment);
-    _loadThread();
+    //_loadThread();
   }
 
   @override
@@ -92,7 +95,7 @@ class _ThreadState extends State<Thread> {
         final authorName = author?.name ?? "Deleted User";
         final authorProfilePicture =
             author?.profilePicture ?? "assets/default_profile.png";
-        final comments = data.comments;
+        //final comments = data.comments;
 
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -158,6 +161,7 @@ class _ThreadState extends State<Thread> {
                     SizedBox(height: 8),
                     Expanded(
                       child: SingleChildScrollView(
+                        padding: EdgeInsets.only(bottom: 120),
                         child: Wrap(
                           children: [
                             Column(
@@ -211,16 +215,36 @@ class _ThreadState extends State<Thread> {
                               ],
                             ),
 
-                            Column(
-                              children: comments.map((c) {
-                                return Comment(
-                                  userId: c.userId,
-                                  username: c.username,
-                                  threadId: c.threadId,
-                                  comment: c.comment,
-                                  likes: c.likes,
+                            StreamBuilder<List<model.Comment>>(
+                              stream: db.watchThreadComments(widget.id),
+                              builder: (context, commentSnapshot) {
+                                if (commentSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (commentSnapshot.hasError) {
+                                  return Center(
+                                    child: Text(
+                                      'Error loading comments ${commentSnapshot.error}',
+                                    ),
+                                  );
+                                }
+
+                                final comments = commentSnapshot.data ?? [];
+
+                                return Column(
+                                  children: comments.map((c) {
+                                    return Comment(
+                                      userId: c.userId,
+                                      username: c.username,
+                                      threadId: c.threadId,
+                                      comment: c.comment,
+                                      likes: c.likes,
+                                    );
+                                  }).toList(),
                                 );
-                              }).toList(),
+                              },
                             ),
                           ],
                         ),
@@ -251,11 +275,11 @@ class _ThreadState extends State<Thread> {
 class ThreadData {
   final model.Thread thread;
   final User? author;
-  final List<model.Comment> comments;
+  //final List<model.Comment> comments;
 
   ThreadData({
     required this.thread,
     required this.author,
-    required this.comments,
+    //required this.comments,
   });
 }
