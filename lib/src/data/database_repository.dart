@@ -47,6 +47,8 @@ abstract class DatabaseRepository {
   Future<Comment?> getComment(String id);
 
   Future<List<Comment>> getThreadComments(String threadId);
+
+  Stream<List<Comment>> watchThreadComments(String threadId);
   /* Create */
   Future<Comment> createComment(Comment draft);
 

@@ -161,6 +161,20 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
   }
 
   @override
+  Stream<List<Comment>> watchThreadComments(String threadId) {
+    return _firestore
+        .collection('comments')
+        .where('threadId', isEqualTo: threadId)
+        .orderBy('createdAt', descending: false)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => Comment.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
+  }
+
+  @override
   Future<Comment?> getComment(String id) async {
     final doc = await _firestore.collection('comments').doc(id).get();
     if (!doc.exists) return null;
