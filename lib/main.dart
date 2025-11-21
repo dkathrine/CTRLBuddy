@@ -3,6 +3,7 @@ import 'package:ctrl_buddy/src/data/firestore_db_repo.dart';
 import 'package:ctrl_buddy/src/features/login_screen/presentation/complete_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 //import 'package:ctrl_buddy/src/data/mock_db.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -50,6 +51,11 @@ class Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authRepo = context.read<AuthRepository>();
+
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.immersiveSticky,
+      overlays: [SystemUiOverlay.top],
+    );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
