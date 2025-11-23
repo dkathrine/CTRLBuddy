@@ -25,6 +25,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   bool _loadingUser = true;
   User? _existingUser;
 
+  String _selectedProfilePicture = "assets/profile_pictures/0.png";
+
   // interest ids (game doc ids)
   final List<String> _interestIds = <String>[];
   // cache for game metadata to show labels/covers
@@ -52,6 +54,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         _existingUser = user;
         _usernameCtrl.text = user.name;
         _bioCtrl.text = user.bio;
+        _selectedProfilePicture = user.profilePicture.isNotEmpty
+            ? user.profilePicture
+            : "assets/profile_pictures/0.png";
         _interestIds.clear();
         _interestIds.addAll(user.interests);
 
@@ -76,6 +81,76 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     }
   }
 
+  Future<void> _showProfilePicturePicker() async {
+    final selectedPicture = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Choose Profile Picture',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.maxFinite,
+                  height: 400,
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                        ),
+                    itemCount: 33,
+                    itemBuilder: (context, index) {
+                      final picturePath = "assets/profile_pictures/$index.png";
+                      final isSelected = picturePath == _selectedProfilePicture;
+
+                      return GestureDetector(
+                        onTap: () => Navigator.of(context).pop(picturePath),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: isSelected
+                                ? Border.all(
+                                    color: Theme.of(context).textColor,
+                                    width: 3,
+                                  )
+                                : null,
+                          ),
+                          child: CircleAvatar(
+                            backgroundImage: AssetImage(picturePath),
+                            radius: 40,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedPicture != null) {
+      setState(() {
+        _selectedProfilePicture = selectedPicture;
+      });
+    }
+  }
+
   Future<void> _onSave() async {
     final username = _usernameCtrl.text.trim();
     final bio = _bioCtrl.text.trim();
@@ -97,8 +172,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         id: widget.uid,
         name: username,
         bio: bio,
-        profilePicture:
-            _existingUser?.profilePicture ?? "assets/noodlecat.jpeg",
+        profilePicture: _selectedProfilePicture,
         threads: _existingUser?.threads ?? [],
         interests: List<String>.from(_interestIds),
         createdAt: _existingUser?.createdAt ?? DateTime.now(),
@@ -186,6 +260,42 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundImage: AssetImage(_selectedProfilePicture),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Theme.of(context).textColor,
+                            width: 2,
+                          ),
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            size: 20,
+                            color: Theme.of(context).textColor,
+                          ),
+                          onPressed: _showProfilePicturePicker,
+                          padding: const EdgeInsets.all(8),
+                          constraints: const BoxConstraints(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
               _existingUser == null
                   ? TextField(
                       controller: _usernameCtrl,

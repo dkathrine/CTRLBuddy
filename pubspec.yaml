@@ -27,6 +27,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/profile_pictures/
 
 flutter_launcher_icons:
     android: true

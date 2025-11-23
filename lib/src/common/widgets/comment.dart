@@ -8,7 +8,7 @@ class Comment extends StatefulWidget {
     required this.threadId,
     this.username = "Name",
     this.likes = 0,
-    this.imgPath = "assets/noodlecat.jpeg",
+    this.userProfilePicture = "assets/default_profile.png",
     this.comment =
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris non pellentesque odio. Sed porttitor vestibulum magna. Vivamus finibus quis lorem ac dictum. Maecenas nec elit pharetra odio consequat bibendum sollicitudin vel dolor.",
     this.time = "2s ago",
@@ -18,7 +18,7 @@ class Comment extends StatefulWidget {
   final String threadId;
   final String username;
   final int likes;
-  final String imgPath;
+  final String userProfilePicture;
   final String comment;
   final String time;
 
@@ -42,7 +42,7 @@ class _CommentState extends State<Comment> {
                 children: [
                   CircleAvatar(
                     radius: 16,
-                    backgroundImage: AssetImage(widget.imgPath),
+                    backgroundImage: AssetImage(widget.userProfilePicture),
                   ),
                   Text(
                     widget.username,
