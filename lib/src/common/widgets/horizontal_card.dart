@@ -1,18 +1,20 @@
+import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:ctrl_buddy/src/theme/app_theme.dart';
 import 'package:ctrl_buddy/src/features/thread/presentation/thread.dart';
+import 'package:provider/provider.dart';
 
 class HorizontalCard extends StatelessWidget {
   const HorizontalCard({
     super.key,
-    required this.image,
     required this.title,
     required this.desc,
     required this.authorId,
     required this.threadId,
+    required this.gameId,
   });
 
-  final dynamic image;
+  final String gameId;
   final String title;
   final String threadId;
   final String authorId;
@@ -20,6 +22,8 @@ class HorizontalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final db = context.read<DatabaseRepository>();
+
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
@@ -97,16 +101,74 @@ class HorizontalCard extends StatelessWidget {
                   ),
                 ),
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.horizontal(
-                  right: Radius.circular(10),
-                ),
-                child: Image(
-                  image: AssetImage(image),
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                ),
+              FutureBuilder(
+                future: db.getGameById(gameId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(10),
+                        ),
+                      ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final game = snapshot.data;
+                  final imageUrl =
+                      game?.coverUrl ??
+                      'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png';
+
+                  return ClipRRect(
+                    borderRadius: BorderRadius.horizontal(
+                      right: Radius.circular(10),
+                    ),
+                    child: Image.network(
+                      imageUrl,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[800],
+                          child: Icon(
+                            Icons.image_not_supported,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[800],
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ],
           ),

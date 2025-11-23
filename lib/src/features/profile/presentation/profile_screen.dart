@@ -78,8 +78,8 @@ class ProfileScreen extends StatelessWidget {
 
         final db = context.read<DatabaseRepository>();
 
-        return FutureBuilder<User?>(
-          future: db.getUser(fbUser.uid),
+        return StreamBuilder<User?>(
+          stream: db.watchUser(fbUser.uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -144,9 +144,7 @@ class ProfileScreen extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 80,
-                              backgroundImage: AssetImage(
-                                "assets/noodlecat.jpeg",
-                              ),
+                              backgroundImage: AssetImage(user.profilePicture),
                             ),
                             SizedBox(height: 4),
                             Text(
@@ -256,7 +254,7 @@ class ProfileScreen extends StatelessWidget {
                                           )
                                             if (i.isEven)
                                               HorizontalCard(
-                                                image: "assets/noodlecat.jpeg",
+                                                gameId: userThreads[i].gameId,
                                                 title: userThreads[i].title,
                                                 desc: userThreads[i].message,
                                                 authorId: userThreads[i].userId,
@@ -276,7 +274,7 @@ class ProfileScreen extends StatelessWidget {
                                           )
                                             if (i.isOdd)
                                               HorizontalCard(
-                                                image: "assets/noodlecat.jpeg",
+                                                gameId: userThreads[i].gameId,
                                                 title: userThreads[i].title,
                                                 desc: userThreads[i].message,
                                                 authorId: userThreads[i].userId,

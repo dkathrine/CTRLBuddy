@@ -235,12 +235,26 @@ class _ThreadState extends State<Thread> {
 
                                 return Column(
                                   children: comments.map((c) {
-                                    return Comment(
-                                      userId: c.userId,
-                                      username: c.username,
-                                      threadId: c.threadId,
-                                      comment: c.comment,
-                                      likes: c.likes,
+                                    return FutureBuilder<User?>(
+                                      future: db.getUser(c.userId),
+                                      builder: (context, userSnapshot) {
+                                        final currentProfilePicture =
+                                            userSnapshot.data?.profilePicture ??
+                                            "assets/default_profile.png";
+                                        final currentUsername =
+                                            userSnapshot.data?.name ??
+                                            c.username;
+
+                                        return Comment(
+                                          userId: c.userId,
+                                          username: currentUsername,
+                                          userProfilePicture:
+                                              currentProfilePicture,
+                                          threadId: c.threadId,
+                                          comment: c.comment,
+                                          likes: c.likes,
+                                        );
+                                      },
                                     );
                                   }).toList(),
                                 );
