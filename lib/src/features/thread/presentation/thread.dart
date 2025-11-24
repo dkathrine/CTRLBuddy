@@ -45,6 +45,23 @@ class _ThreadState extends State<Thread> {
     setState(() {});
   }
 
+  Future<void> _toggleLike(model.Thread thread) async {
+    final auth = context.read<AuthRepository>();
+    final currentUserId = auth.getCurrentUserId();
+
+    if (currentUserId == null) return;
+
+    final isLiked = thread.likedBy.contains(currentUserId);
+
+    if (isLiked) {
+      await db.unlikeThread(thread.id, currentUserId);
+    } else {
+      await db.likeThread(thread.id, currentUserId);
+    }
+
+    _loadThread();
+  }
+
   Future<void> _addComment(String commentText) async {
     if (commentText.trim().isEmpty) return;
 
@@ -96,6 +113,11 @@ class _ThreadState extends State<Thread> {
         final authorProfilePicture =
             author?.profilePicture ?? "assets/default_profile.png";
         //final comments = data.comments;
+
+        final auth = context.read<AuthRepository>();
+        final currentUserId = auth.getCurrentUserId();
+        final isThreadLiked =
+            currentUserId != null && thread.likedBy.contains(currentUserId);
 
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -183,8 +205,11 @@ class _ThreadState extends State<Thread> {
                                           spacing: 4,
                                           children: [
                                             GestureDetector(
+                                              onTap: () => _toggleLike(thread),
                                               child: Icon(
-                                                LucideIcons.heart,
+                                                isThreadLiked
+                                                    ? Icons.favorite
+                                                    : LucideIcons.heart,
                                                 size: 24,
                                               ),
                                             ),
@@ -246,6 +271,7 @@ class _ThreadState extends State<Thread> {
                                             c.username;
 
                                         return Comment(
+                                          commentId: c.id,
                                           userId: c.userId,
                                           username: currentUsername,
                                           userProfilePicture:
@@ -253,6 +279,7 @@ class _ThreadState extends State<Thread> {
                                           threadId: c.threadId,
                                           comment: c.comment,
                                           likes: c.likes,
+                                          likedBy: c.likedBy,
                                           createdAt: c.createdAt,
                                         );
                                       },

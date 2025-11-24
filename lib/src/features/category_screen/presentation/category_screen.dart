@@ -98,7 +98,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       'https://res.cloudinary.com/dhdugvhj3/image/upload/v1762862497/CTRLBuddyThumbs/icon_vpicgq.png',
                                   image:
                                       user?.profilePicture ??
-                                      'assets/default_profile.jpeg',
+                                      'assets/default_profile.png',
                                   title: thread.title,
                                   author: user?.name ?? "Deleted User",
                                   desc: thread.message,

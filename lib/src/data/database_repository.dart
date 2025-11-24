@@ -58,6 +58,9 @@ abstract class DatabaseRepository {
   /* Delete */
   Future<void> deleteComment(String id);
 
+  Future<void> likeComment(String commentId, String userId);
+  Future<void> unlikeComment(String commentId, String userId);
+
   /* Messages */
   /* Read */
   Future<List<Message>> get messages;
@@ -109,6 +112,11 @@ abstract class DatabaseRepository {
 
   /* Helper to get most liked/popular threads */
   Future<List<Thread>> get popularThreads;
+
+  Stream<List<Thread>> watchPopularThreads();
+
+  Future<void> likeThread(String threadId, String userId);
+  Future<void> unlikeThread(String threadId, String userId);
 
   /* Games */
   /// Returns published games (small dataset expected).
