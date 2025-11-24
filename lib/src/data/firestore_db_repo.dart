@@ -82,6 +82,42 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
   }
 
   @override
+  Stream<List<Thread>> watchPopularThreads() {
+    return _firestore.collection('threads').snapshots().asyncMap((
+      snapshot,
+    ) async {
+      // Get all threads
+      List<Thread> threads = snapshot.docs
+          .map((doc) => Thread.fromMap(doc.id, doc.data()))
+          .toList();
+
+      // Calculate total popularity for each thread (thread likes + comment likes)
+      List<MapEntry<Thread, int>> threadsWithPopularity = [];
+
+      for (var thread in threads) {
+        // Get all comments for this thread
+        final commentsSnapshot = await _firestore
+            .collection('comments')
+            .where('threadId', isEqualTo: thread.id)
+            .get();
+
+        int commentLikesSum = commentsSnapshot.docs.fold(
+          0,
+          (total, doc) => total + ((doc.data()['likes'] as int?) ?? 0),
+        );
+
+        // Total popularity = thread likes + comment likes
+        int totalPopularity = thread.likes + commentLikesSum;
+        threadsWithPopularity.add(MapEntry(thread, totalPopularity));
+      }
+
+      // Sort by total popularity and return top 10
+      threadsWithPopularity.sort((a, b) => b.value.compareTo(a.value));
+      return threadsWithPopularity.take(10).map((entry) => entry.key).toList();
+    });
+  }
+
+  @override
   Future<Thread?> getThread(String id) async {
     final doc = await _firestore.collection('threads').doc(id).get();
     if (!doc.exists) return null;
@@ -133,6 +169,23 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
         .collection('threads')
         .doc(updated.id)
         .update(updated.toMap());
+  }
+
+  /* Likes */
+  @override
+  Future<void> likeThread(String threadId, String userId) async {
+    await _firestore.collection('threads').doc(threadId).update({
+      'likedBy': FieldValue.arrayUnion([userId]),
+      'likes': FieldValue.increment(1),
+    });
+  }
+
+  @override
+  Future<void> unlikeThread(String threadId, String userId) async {
+    await _firestore.collection('threads').doc(threadId).update({
+      'likedBy': FieldValue.arrayRemove([userId]),
+      'likes': FieldValue.increment(-1),
+    });
   }
 
   /* Delete */
@@ -197,6 +250,23 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
         .collection('comments')
         .doc(updated.id)
         .update(updated.toMap());
+  }
+
+  /* Likes */
+  @override
+  Future<void> likeComment(String commentId, String userId) async {
+    await _firestore.collection('comments').doc(commentId).update({
+      'likedBy': FieldValue.arrayUnion([userId]),
+      'likes': FieldValue.increment(1),
+    });
+  }
+
+  @override
+  Future<void> unlikeComment(String commentId, String userId) async {
+    await _firestore.collection('comments').doc(commentId).update({
+      'likedBy': FieldValue.arrayRemove([userId]),
+      'likes': FieldValue.increment(-1),
+    });
   }
 
   /* Delete */

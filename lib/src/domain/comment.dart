@@ -6,6 +6,7 @@ class Comment {
   final String threadId;
   final String comment;
   final int likes;
+  final List<String> likedBy;
   final DateTime createdAt;
 
   Comment({
@@ -16,8 +17,10 @@ class Comment {
     required this.threadId,
     required this.comment,
     this.likes = 0,
+    List<String>? likedBy,
     DateTime? createdAt,
-  }) : createdAt = createdAt ?? DateTime.now();
+  }) : likedBy = likedBy ?? [],
+       createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toMap() => {
     'userId': userId,
@@ -26,18 +29,20 @@ class Comment {
     'threadId': threadId,
     'comment': comment,
     'likes': likes,
+    'likedBy': likedBy,
     'createdAt': createdAt.toIso8601String(),
   };
 
   factory Comment.fromMap(String id, Map<String, dynamic> map) {
     return Comment(
-      id: id, // <-- Firestore doc ID
+      id: id,
       userId: map['userId'],
       username: map['username'],
       userProfilePicture: map['userProfilePicture'],
       threadId: map['threadId'],
       comment: map['comment'],
       likes: map['likes'] ?? 0,
+      likedBy: List<String>.from(map['likedBy'] ?? []),
       createdAt: DateTime.parse(map['createdAt']),
     );
   }

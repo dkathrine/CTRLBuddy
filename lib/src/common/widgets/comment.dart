@@ -1,6 +1,9 @@
+import 'package:ctrl_buddy/src/data/auth_repository.dart';
+import 'package:ctrl_buddy/src/data/database_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ctrl_buddy/src/common/widgets/time_display.dart';
+import 'package:provider/provider.dart';
 
 class Comment extends StatefulWidget {
   const Comment({
@@ -8,6 +11,8 @@ class Comment extends StatefulWidget {
     required this.userId,
     required this.threadId,
     required this.createdAt,
+    required this.commentId,
+    required this.likedBy,
     this.username = "Name",
     this.likes = 0,
     this.userProfilePicture = "assets/default_profile.png",
@@ -22,14 +27,37 @@ class Comment extends StatefulWidget {
   final String userProfilePicture;
   final String comment;
   final DateTime createdAt;
+  final String commentId;
+  final List<String> likedBy;
 
   @override
   State<Comment> createState() => _CommentState();
 }
 
 class _CommentState extends State<Comment> {
+  Future<void> _toggleLike() async {
+    final auth = context.read<AuthRepository>();
+    final db = context.read<DatabaseRepository>();
+    final currentUserId = auth.getCurrentUserId();
+
+    if (currentUserId == null) return;
+
+    final isLiked = widget.likedBy.contains(currentUserId);
+
+    if (isLiked) {
+      await db.unlikeComment(widget.commentId, currentUserId);
+    } else {
+      await db.likeComment(widget.commentId, currentUserId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final auth = context.read<AuthRepository>();
+    final currentUserId = auth.getCurrentUserId();
+    final isLiked =
+        currentUserId != null && widget.likedBy.contains(currentUserId);
+
     return Padding(
       padding: EdgeInsetsGeometry.symmetric(vertical: 16),
       child: Column(
@@ -69,7 +97,13 @@ class _CommentState extends State<Comment> {
                   Row(
                     spacing: 4,
                     children: [
-                      GestureDetector(child: Icon(LucideIcons.heart, size: 20)),
+                      GestureDetector(
+                        onTap: _toggleLike,
+                        child: Icon(
+                          isLiked ? Icons.favorite : LucideIcons.heart,
+                          size: 20,
+                        ),
+                      ),
                       Text(
                         widget.likes.toString(),
                         style: TextStyle(

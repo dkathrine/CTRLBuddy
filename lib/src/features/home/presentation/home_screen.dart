@@ -220,8 +220,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Text('Popular', style: Theme.of(context).textTheme.headlineLarge),
         Expanded(
-          child: FutureBuilder(
-            future: _popularThreads,
+          child: StreamBuilder<List<Thread>>(
+            stream: db.watchPopularThreads(),
             builder: (context, asyncSnapshot) {
               if (asyncSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
