@@ -58,69 +58,79 @@ class _CommentState extends State<Comment> {
     final isLiked =
         currentUserId != null && widget.likedBy.contains(currentUserId);
 
-    return Padding(
-      padding: EdgeInsetsGeometry.symmetric(vertical: 16),
-      child: Column(
+    return IntrinsicHeight(
+      child: Row(
         children: [
-          Column(
-            spacing: 12,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                spacing: 8,
-                children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundImage: AssetImage(widget.userProfilePicture),
-                  ),
-                  Text(
-                    widget.username,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Padding(
-                    padding: EdgeInsetsGeometry.only(left: 4),
-                    child: TimeDisplay(
-                      dateTime: widget.createdAt,
-                      style: Theme.of(context).textTheme.bodyMedium,
+          VerticalDivider(color: Color(0xFF666666), thickness: 1, width: 1),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                Column(
+                  spacing: 12,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      spacing: 8,
+                      children: [
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundImage: AssetImage(
+                            widget.userProfilePicture,
+                          ),
+                        ),
+                        Text(
+                          widget.username,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Padding(
+                          padding: EdgeInsetsGeometry.only(left: 4),
+                          child: TimeDisplay(
+                            dateTime: widget.createdAt,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              Text(
-                widget.comment,
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(width: 5),
-                  Row(
-                    spacing: 4,
-                    children: [
-                      GestureDetector(
-                        onTap: _toggleLike,
-                        child: Icon(
-                          isLiked ? Icons.favorite : LucideIcons.heart,
-                          size: 20,
+                    Text(
+                      widget.comment,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(width: 15),
+                        Row(
+                          spacing: 4,
+                          children: [
+                            GestureDetector(
+                              onTap: _toggleLike,
+                              child: Icon(
+                                isLiked ? Icons.favorite : LucideIcons.heart,
+                                size: 20,
+                              ),
+                            ),
+                            Text(
+                              widget.likes.toString(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                letterSpacing: 0.5,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        widget.likes.toString(),
-                        style: TextStyle(
-                          fontSize: 11,
-                          letterSpacing: 0.5,
-                          fontWeight: FontWeight.w400,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                      ],
+                    ),
+                  ],
+                ),
+                //SizedBox(height: 8),
+                //Divider(color: Color(0xFF666666), thickness: 1, height: 1),
+              ],
+            ),
           ),
-          SizedBox(height: 8),
-          Divider(color: Color(0xFF666666), thickness: 1, height: 1),
         ],
       ),
     );

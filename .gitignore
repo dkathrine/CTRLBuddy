@@ -50,3 +50,4 @@ lib/src/features/profile/presentation/profile_screen copy.dart
 assets/thumbs
 lib/src/features/login_screen/presentation/complete_profile_screen copy.dart
 lib/src/common/widgets/horizontal_card copy.dart
+lib/src/common/widgets/comment copy.dart
