@@ -151,10 +151,10 @@ class ProfileScreen extends StatelessWidget {
                               user.name,
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
-                            Text(
+                            /* Text(
                               "Status",
                               style: Theme.of(context).textTheme.titleMedium,
-                            ),
+                            ), */
                           ],
                         ),
                         Column(
@@ -242,6 +242,8 @@ class ProfileScreen extends StatelessWidget {
                                 return SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Wrap(
                                         spacing: 16,
