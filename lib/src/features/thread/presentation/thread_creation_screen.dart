@@ -100,15 +100,14 @@ class _ThreadCreationScreenState extends State<ThreadCreationScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Post a Thread",
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
+        title: Text(
+          "Post a Thread",
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: ElevatedButton(
               onPressed: _loading ? null : _onPost,
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(
@@ -116,14 +115,18 @@ class _ThreadCreationScreenState extends State<ThreadCreationScreen> {
                 ),
               ),
               child: _loading
-                  ? const CircularProgressIndicator()
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : Text(
                       "Post",
                       style: TextStyle(color: Theme.of(context).textColor),
                     ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
