@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:ctrl_buddy/src/common/widgets/time_display.dart';
 
 class Comment extends StatefulWidget {
   const Comment({
     super.key,
     required this.userId,
     required this.threadId,
+    required this.createdAt,
     this.username = "Name",
     this.likes = 0,
     this.userProfilePicture = "assets/default_profile.png",
     this.comment =
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris non pellentesque odio. Sed porttitor vestibulum magna. Vivamus finibus quis lorem ac dictum. Maecenas nec elit pharetra odio consequat bibendum sollicitudin vel dolor.",
-    this.time = "2s ago",
   });
 
   final String userId;
@@ -20,7 +21,7 @@ class Comment extends StatefulWidget {
   final int likes;
   final String userProfilePicture;
   final String comment;
-  final String time;
+  final DateTime createdAt;
 
   @override
   State<Comment> createState() => _CommentState();
@@ -50,8 +51,8 @@ class _CommentState extends State<Comment> {
                   ),
                   Padding(
                     padding: EdgeInsetsGeometry.only(left: 4),
-                    child: Text(
-                      widget.time,
+                    child: TimeDisplay(
+                      dateTime: widget.createdAt,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),

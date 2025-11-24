@@ -253,6 +253,7 @@ class _ThreadState extends State<Thread> {
                                           threadId: c.threadId,
                                           comment: c.comment,
                                           likes: c.likes,
+                                          createdAt: c.createdAt,
                                         );
                                       },
                                     );
