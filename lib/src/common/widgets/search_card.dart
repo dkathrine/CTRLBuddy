@@ -68,13 +68,13 @@ class SearchCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       color: Colors.white.withAlpha(35),
                     ),
-                    child: Center(
+                    /* child: Center(
                       child: Text(
                         gameName,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                    ),
+                    ), */
                   ),
                 ],
               ),

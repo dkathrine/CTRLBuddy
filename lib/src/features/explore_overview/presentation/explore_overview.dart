@@ -102,7 +102,7 @@ class _ExploreOverviewState extends State<ExploreOverview> {
                   runSpacing: 16,
                   children: filtered.map((game) {
                     return SearchCard(
-                      //gameName: game.gameName,
+                      gameName: game.gameName,
                       gameId: game.gameId,
                     );
                   }).toList(),
