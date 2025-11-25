@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class SearchCard extends StatelessWidget {
   const SearchCard({
     super.key,
-    required this.gameName,
+    this.gameName = "",
     required this.gameId, // Added gameId parameter
   });
 
@@ -44,7 +44,9 @@ class SearchCard extends StatelessWidget {
                         ? Image.network(
                             coverUrl,
                             fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.width * 0.4,
+                            width: MediaQuery.of(
+                              context,
+                            ).size.width /* * 0.4 */,
                             height: MediaQuery.of(context).size.height,
                             errorBuilder: (context, error, stackTrace) {
                               return Image.network(
