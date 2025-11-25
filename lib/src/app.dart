@@ -41,6 +41,7 @@ class _MainAppState extends State<MainApp> {
       home: Scaffold(
         //backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Color(0xFF3A1754),
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
